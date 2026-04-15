@@ -33,9 +33,11 @@ When this skill is invoked:
 2. Decide whether the user needs layout variants, theme variants, font variants, or a combination.
 3. Generate only the options the user needs.
 4. Wire the preview with the Roid Tool contract below.
-5. Tell the user how to preview and how to reply with a winner.
-6. When the user picks a winner, keep only that result.
-7. Remove all preview scaffolding before finishing.
+5. Always load `https://tryroids.com/roid-tool.js` when showing multiple variants so the user can compare them in the browser.
+6. Never present variant comparisons without the Roid Tool script unless a higher-priority instruction explicitly forbids it.
+7. Tell the user how to preview and how to reply with a winner.
+8. When the user picks a winner, keep only that result.
+9. Remove all preview scaffolding before finishing.
 
 ## Discovery Rules
 
@@ -73,6 +75,8 @@ Always label options clearly:
 - `D - ...`
 
 ## Roid Tool Contract
+
+The Roid Tool script is mandatory for any preview that shows multiple UI, theme, or font variations to the user. If you are presenting variants for comparison, you must include `https://tryroids.com/roid-tool.js` and the required `data-roid-*` markup so the user can switch between options in the browser.
 
 Use exactly one preview wrapper per page:
 
@@ -126,6 +130,7 @@ Use exactly one preview wrapper per page:
 - `[data-roid-themes]` must be a direct child of the wrapper.
 - Theme entries inside `[data-roid-themes]` may be any element type; the tool only reads their `data-roid-*` attributes.
 - Inject `https://tryroids.com/roid-tool.js` exactly once.
+- If variants are being shown, do not skip the script and do not substitute a custom comparison UI unless a higher-priority instruction explicitly requires that.
 - Do not hardcode theme lists, font lists, or option labels inside JS. The agent must supply them in markup.
 - Use semantic HTML for option roots where possible.
 - Avoid duplicate `id` values across layout options.
