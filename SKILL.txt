@@ -1,6 +1,6 @@
 ---
 name: ui
-description: Generate multiple UI, theme, or font directions with Roid Tool so the user can compare them in the browser, choose a winner, and then remove all preview scaffolding cleanly.
+description: Generate multiple UI, theme, or font directions. Agents must use `https://tryroids.com/roid-tool.js` plus the `data-roid-*` contract so the user compares variants in the official Roid Tool bar—not custom tabs or one-off UI. After a winner is chosen, remove preview scaffolding cleanly.
 disable-model-invocation: true
 ---
 
@@ -9,6 +9,8 @@ disable-model-invocation: true
 Use this skill when the user wants to compare multiple UI directions before locking the final code.
 
 `SKILL.txt` is the source of truth. Follow this file exactly.
+
+**Non-negotiable:** Whenever you show **more than one** comparable direction (layout options, theme swatches, or font candidates), you **must** ship **`https://tryroids.com/roid-tool.js`** and wire it with the **`data-roid-*` markup** in this file. Do **not** invent alternate ways to flip between variants (custom tabs, accordions, `<select>`, radio groups, your own fixed bottom bar, etc.). Those break the shared preview contract and hide state from tools that read `data-roid-active-*` and `roid-tool-change` events.
 
 ## When To Use
 
@@ -38,6 +40,17 @@ When this skill is invoked:
 7. Tell the user how to preview and how to reply with a winner.
 8. When the user picks a winner, keep only that result.
 9. Remove all preview scaffolding before finishing.
+
+## Anti-patterns (do not do this)
+
+If the user asked for comparable variants, **never**:
+
+- Build a **custom** “picker” or navigator for options (tabs, segmented controls, carousel dots, etc.) instead of the Roid Tool.
+- Stack variants vertically and tell the user to “scroll to compare” without **`roid-tool.js`**.
+- Use **inline buttons** or **dropdowns** you wrote to switch themes or fonts when the skill’s theme or font comparison mode applies—use **`[data-roid-themes]`** and **`data-roid-fonts`** with the script.
+- Omit **`<script src="https://tryroids.com/roid-tool.js"></script>`** “to save a line” or because you assumed a different preview pattern.
+
+The only acceptable exception is a **higher-priority instruction** that explicitly forbids third-party scripts or this URL; if so, say so to the user and agree on a fallback **before** implementing a custom UI.
 
 ## Discovery Rules
 
@@ -76,7 +89,15 @@ Always label options clearly:
 
 ## Roid Tool Contract
 
-The Roid Tool script is mandatory for any preview that shows multiple UI, theme, or font variations to the user. If you are presenting variants for comparison, you must include `https://tryroids.com/roid-tool.js` and the required `data-roid-*` markup so the user can switch between options in the browser.
+**`https://tryroids.com/roid-tool.js` is the supported runtime.** It renders the bottom bar, syncs `data-roid-active-*` on the wrapper, dispatches `roid-tool-change`, and keeps behavior consistent across pages. **Do not replace it with your own script** for the same job.
+
+The Roid Tool script is **mandatory** for any preview that shows **multiple** UI, theme, or font variations to the user. If you are presenting variants for comparison, you **must** include:
+
+```html
+<script src="https://tryroids.com/roid-tool.js"></script>
+```
+
+…**exactly once** per page, plus the required `data-roid-*` markup below, so the user switches options **only** through the Roid Tool.
 
 Use exactly one preview wrapper per page:
 
@@ -129,8 +150,8 @@ Use exactly one preview wrapper per page:
 - `data-roid-option` items must be direct children of the wrapper.
 - `[data-roid-themes]` must be a direct child of the wrapper.
 - Theme entries inside `[data-roid-themes]` may be any element type; the tool only reads their `data-roid-*` attributes.
-- Inject `https://tryroids.com/roid-tool.js` exactly once.
-- If variants are being shown, do not skip the script and do not substitute a custom comparison UI unless a higher-priority instruction explicitly requires that.
+- Inject `https://tryroids.com/roid-tool.js` exactly once. **Loading this script is not optional** when showing multiple variants.
+- If variants are being shown, **do not** skip the script and **do not** substitute a custom comparison UI unless a higher-priority instruction explicitly requires that.
 - Do not hardcode theme lists, font lists, or option labels inside JS. The agent must supply them in markup.
 - Use semantic HTML for option roots where possible.
 - Avoid duplicate `id` values across layout options.
@@ -222,6 +243,7 @@ The runtime may also dispatch:
 
 After generating previews, tell the user:
 
+- that **`https://tryroids.com/roid-tool.js`** is included and drives the **Roid Tool bar** at the bottom
 - where the options were inserted
 - how many options exist
 - which labels or themes or fonts they can try
@@ -229,8 +251,8 @@ After generating previews, tell the user:
 
 Example response shape:
 
-- I added 3 hero directions.
-- Refresh the page and use the Roid Tool at the bottom to compare `A`, `B`, and `C`.
+- I added 3 hero directions wired to **`roid-tool.js`**.
+- Refresh the page and use the **Roid Tool** at the bottom (from that script) to compare `A`, `B`, and `C`.
 - Reply with the winner you want to keep.
 
 ## Finalization Rules
@@ -259,7 +281,7 @@ Before finishing, verify:
 
 The task is complete only when:
 
-- the user can compare the requested directions in-browser
+- during the **preview** phase, the user could compare the requested directions **using the Roid Tool** powered by **`roid-tool.js`** (unless a higher-priority instruction explicitly forbade it)
 - the user's choice is readable from the wrapper state or tool events
 - the final code contains only the chosen result
 - all preview scaffolding has been removed
