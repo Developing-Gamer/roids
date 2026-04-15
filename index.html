@@ -326,6 +326,285 @@
         justify-content: center;
       }
     }
+
+    /* ── prompts section ── */
+    .prompts-section {
+      position: relative;
+      z-index: 10;
+      padding: 0 24px 140px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+
+    .section-label-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border-bright), transparent);
+    }
+
+    .section-label-text {
+      font-family: 'Azeret Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .prompts-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .prompts-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(28px, 4vw, 48px);
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+
+    .prompts-subtitle {
+      font-family: 'Azeret Mono', monospace;
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .prompts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .prompt-card {
+      background: var(--surface);
+      border: 1px solid var(--border-bright);
+      border-radius: 12px;
+      padding: 20px 20px 16px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .prompt-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent-dim);
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+
+    .prompt-card:hover {
+      border-color: rgba(198, 255, 0, 0.28);
+      transform: translateY(-2px);
+    }
+
+    .prompt-card:hover::before {
+      opacity: 1;
+    }
+
+    .prompt-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .prompt-tag {
+      font-family: 'Azeret Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 100px;
+      flex-shrink: 0;
+    }
+
+    .prompt-tag.tag-layout {
+      background: rgba(198, 255, 0, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(198, 255, 0, 0.2);
+    }
+
+    .prompt-tag.tag-theme {
+      background: rgba(120, 180, 255, 0.1);
+      color: #7db4ff;
+      border: 1px solid rgba(120, 180, 255, 0.2);
+    }
+
+    .prompt-tag.tag-font {
+      background: rgba(255, 180, 100, 0.1);
+      color: #ffb86c;
+      border: 1px solid rgba(255, 180, 100, 0.2);
+    }
+
+    .prompt-tag.tag-full {
+      background: rgba(180, 120, 255, 0.1);
+      color: #c084fc;
+      border: 1px solid rgba(180, 120, 255, 0.2);
+    }
+
+    .prompt-copy-icon {
+      opacity: 0;
+      transition: opacity 0.18s;
+      color: var(--muted);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .prompt-card:hover .prompt-copy-icon {
+      opacity: 1;
+    }
+
+    .prompt-copy-icon.copied {
+      opacity: 1;
+      color: var(--accent);
+    }
+
+    .prompt-copy-icon svg {
+      width: 13px;
+      height: 13px;
+      display: block;
+    }
+
+    .prompt-text {
+      font-family: 'Azeret Mono', monospace;
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.55;
+      letter-spacing: 0.01em;
+      flex: 1;
+    }
+
+    .prompt-text .prompt-slash {
+      color: var(--accent);
+      font-weight: 500;
+      margin-right: 0.35em;
+    }
+
+    .prompt-text .highlight {
+      color: var(--accent);
+      font-weight: 400;
+    }
+
+    .prompt-card-footer {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .prompt-cursor {
+      width: 7px;
+      height: 14px;
+      background: var(--accent);
+      border-radius: 1px;
+      opacity: 0;
+      animation: cursor-blink 1.1s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    .prompt-card:hover .prompt-cursor {
+      opacity: 1;
+    }
+
+    @keyframes cursor-blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .prompt-hint {
+      font-family: 'Azeret Mono', monospace;
+      font-size: 10px;
+      color: var(--muted-2);
+      letter-spacing: 0.06em;
+    }
+
+    .prompt-card:hover .prompt-hint {
+      color: var(--muted);
+    }
+
+    .prompts-note {
+      text-align: center;
+      margin-top: 40px;
+      font-family: 'Azeret Mono', monospace;
+      font-size: 12px;
+      color: var(--muted-2);
+      letter-spacing: 0.04em;
+    }
+
+    .prompts-note a {
+      color: var(--muted);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color 0.2s;
+    }
+
+    .prompts-note a:hover {
+      color: var(--accent);
+    }
+
+    /* toast */
+    .prompt-toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: var(--surface);
+      border: 1px solid var(--border-bright);
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-family: 'Azeret Mono', monospace;
+      font-size: 12px;
+      color: var(--text);
+      letter-spacing: 0.04em;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .prompt-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 800px) {
+      .prompts-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .prompts-section {
+        padding: 0 16px 100px;
+      }
+      .prompts-grid {
+        grid-template-columns: 1fr;
+      }
+      .prompt-copy-icon {
+        opacity: 1;
+      }
+    }
   </style>
 </head>
 <body>
@@ -377,6 +656,132 @@
     </div>
 
   </section>
+
+  <!-- prompts section -->
+  <section class="prompts-section">
+
+    <div class="section-label">
+      <span class="section-label-line"></span>
+      <span class="section-label-text">How to use it</span>
+      <span class="section-label-line" style="background: linear-gradient(270deg, var(--border-bright), transparent);"></span>
+    </div>
+
+    <div class="prompts-header">
+      <h2 class="prompts-title">Just ask your agent</h2>
+      <p class="prompts-subtitle">Prompts you can send after installing the skill</p>
+    </div>
+
+    <div class="prompts-grid" id="promptsGrid">
+
+      <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/ui Give me 3 hero section directions to compare in the browser">
+        <div class="prompt-card-top">
+          <span class="prompt-tag tag-layout">Layout</span>
+          <span class="prompt-copy-icon">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+              <rect x="5" y="5" width="9" height="9" rx="1.5"/>
+              <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
+            </svg>
+          </span>
+        </div>
+        <p class="prompt-text"><span class="prompt-slash">/ui</span> Give me <span class="highlight">3 hero section</span> directions to compare in the browser</p>
+        <div class="prompt-card-footer">
+          <div class="prompt-cursor"></div>
+          <span class="prompt-hint">click to copy</span>
+        </div>
+      </div>
+
+      <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/ui Show me 4 color theme directions for my dashboard — I want to pick one">
+        <div class="prompt-card-top">
+          <span class="prompt-tag tag-theme">Theme</span>
+          <span class="prompt-copy-icon">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+              <rect x="5" y="5" width="9" height="9" rx="1.5"/>
+              <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
+            </svg>
+          </span>
+        </div>
+        <p class="prompt-text"><span class="prompt-slash">/ui</span> Show me <span class="highlight">4 color theme</span> directions for my dashboard — I want to pick one</p>
+        <div class="prompt-card-footer">
+          <div class="prompt-cursor"></div>
+          <span class="prompt-hint">click to copy</span>
+        </div>
+      </div>
+
+      <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/ui Compare 3 font directions for my landing page — load them and let me switch">
+        <div class="prompt-card-top">
+          <span class="prompt-tag tag-font">Font</span>
+          <span class="prompt-copy-icon">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+              <rect x="5" y="5" width="9" height="9" rx="1.5"/>
+              <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
+            </svg>
+          </span>
+        </div>
+        <p class="prompt-text"><span class="prompt-slash">/ui</span> Compare <span class="highlight">3 font directions</span> for my landing page — load them and let me switch</p>
+        <div class="prompt-card-footer">
+          <div class="prompt-cursor"></div>
+          <span class="prompt-hint">click to copy</span>
+        </div>
+      </div>
+
+      <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/ui Redesign my pricing section — give me 2 layout options side by side">
+        <div class="prompt-card-top">
+          <span class="prompt-tag tag-layout">Layout</span>
+          <span class="prompt-copy-icon">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+              <rect x="5" y="5" width="9" height="9" rx="1.5"/>
+              <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
+            </svg>
+          </span>
+        </div>
+        <p class="prompt-text"><span class="prompt-slash">/ui</span> Redesign my <span class="highlight">pricing section</span> — give me 2 layout options side by side</p>
+        <div class="prompt-card-footer">
+          <div class="prompt-cursor"></div>
+          <span class="prompt-hint">click to copy</span>
+        </div>
+      </div>
+
+      <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/ui Build a dark SaaS landing page with 3 different style directions I can compare">
+        <div class="prompt-card-top">
+          <span class="prompt-tag tag-full">Full page</span>
+          <span class="prompt-copy-icon">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+              <rect x="5" y="5" width="9" height="9" rx="1.5"/>
+              <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
+            </svg>
+          </span>
+        </div>
+        <p class="prompt-text"><span class="prompt-slash">/ui</span> Build a <span class="highlight">dark SaaS landing page</span> with 3 different style directions I can compare</p>
+        <div class="prompt-card-footer">
+          <div class="prompt-cursor"></div>
+          <span class="prompt-hint">click to copy</span>
+        </div>
+      </div>
+
+      <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/ui Give me a light/dark/system theme switcher for my app — 3 palette options">
+        <div class="prompt-card-top">
+          <span class="prompt-tag tag-theme">Theme</span>
+          <span class="prompt-copy-icon">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+              <rect x="5" y="5" width="9" height="9" rx="1.5"/>
+              <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
+            </svg>
+          </span>
+        </div>
+        <p class="prompt-text"><span class="prompt-slash">/ui</span> Give me a <span class="highlight">light / dark / system</span> theme switcher for my app — 3 palette options</p>
+        <div class="prompt-card-footer">
+          <div class="prompt-cursor"></div>
+          <span class="prompt-hint">click to copy</span>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="prompts-note">After the agent generates options, use the <strong style="color: var(--muted);">Roid Tool bar</strong> in the browser to flip through them and pick a winner.</p>
+
+  </section>
+
+  <div class="prompt-toast" id="promptToast">Prompt copied to clipboard</div>
 
   <script>
     /* ── vertical shooting streaks ── */
@@ -472,6 +877,38 @@
 
       requestAnimationFrame(tick);
     })();
+
+    const PROMPT_COPY_SVG = `
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <rect x="5" y="5" width="9" height="9" rx="1.5"/>
+        <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
+      </svg>`;
+    const PROMPT_TICK_SVG = `
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <polyline points="2,8 6,12 14,4"/>
+      </svg>`;
+
+    function copyPrompt(card) {
+      const text = card.dataset.prompt;
+      const iconEl = card.querySelector('.prompt-copy-icon');
+      navigator.clipboard.writeText(text).then(() => {
+        if (copyPrompt._restoreIcon) copyPrompt._restoreIcon();
+        iconEl.classList.add('copied');
+        iconEl.innerHTML = PROMPT_TICK_SVG;
+        copyPrompt._restoreIcon = () => {
+          iconEl.classList.remove('copied');
+          iconEl.innerHTML = PROMPT_COPY_SVG;
+          copyPrompt._restoreIcon = null;
+        };
+        clearTimeout(copyPrompt._iconTimer);
+        copyPrompt._iconTimer = setTimeout(copyPrompt._restoreIcon, 2200);
+
+        const toast = document.getElementById('promptToast');
+        toast.classList.add('show');
+        clearTimeout(copyPrompt._timer);
+        copyPrompt._timer = setTimeout(() => toast.classList.remove('show'), 2000);
+      });
+    }
 
     function copyCommand() {
       const cmd = 'npx skills add https://github.com/developing-gamer/roids --skill ui';
