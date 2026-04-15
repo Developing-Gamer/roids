@@ -391,7 +391,7 @@
       background: var(--surface);
       border: 1px solid var(--border-bright);
       border-radius: 12px;
-      padding: 20px 20px 16px;
+      padding: 20px;
       cursor: pointer;
       transition: border-color 0.2s, background 0.2s, transform 0.15s;
       position: relative;
@@ -504,43 +504,6 @@
     .prompt-text .highlight {
       color: var(--accent);
       font-weight: 400;
-    }
-
-    .prompt-card-footer {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 2px;
-    }
-
-    .prompt-cursor {
-      width: 7px;
-      height: 14px;
-      background: var(--accent);
-      border-radius: 1px;
-      opacity: 0;
-      animation: cursor-blink 1.1s ease-in-out infinite;
-      flex-shrink: 0;
-    }
-
-    .prompt-card:hover .prompt-cursor {
-      opacity: 1;
-    }
-
-    @keyframes cursor-blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
-
-    .prompt-hint {
-      font-family: 'Azeret Mono', monospace;
-      font-size: 10px;
-      color: var(--muted-2);
-      letter-spacing: 0.06em;
-    }
-
-    .prompt-card:hover .prompt-hint {
-      color: var(--muted);
     }
 
     .prompts-note {
@@ -659,20 +622,16 @@
 
   <!-- prompts section -->
   <section class="prompts-section">
-
     <div class="section-label">
       <span class="section-label-line"></span>
       <span class="section-label-text">How to use it</span>
       <span class="section-label-line" style="background: linear-gradient(270deg, var(--border-bright), transparent);"></span>
     </div>
-
     <div class="prompts-header">
       <h2 class="prompts-title">Just ask your agent</h2>
       <p class="prompts-subtitle">Prompts you can send after installing the skill</p>
     </div>
-
     <div class="prompts-grid" id="promptsGrid">
-
       <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/ui Give me 3 hero section directions to compare in the browser">
         <div class="prompt-card-top">
           <span class="prompt-tag tag-layout">Layout</span>
@@ -684,12 +643,7 @@
           </span>
         </div>
         <p class="prompt-text"><span class="prompt-slash">/ui</span> Give me <span class="highlight">3 hero section</span> directions to compare in the browser</p>
-        <div class="prompt-card-footer">
-          <div class="prompt-cursor"></div>
-          <span class="prompt-hint">click to copy</span>
-        </div>
       </div>
-
       <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/ui Show me 4 color theme directions for my dashboard — I want to pick one">
         <div class="prompt-card-top">
           <span class="prompt-tag tag-theme">Theme</span>
@@ -701,12 +655,7 @@
           </span>
         </div>
         <p class="prompt-text"><span class="prompt-slash">/ui</span> Show me <span class="highlight">4 color theme</span> directions for my dashboard — I want to pick one</p>
-        <div class="prompt-card-footer">
-          <div class="prompt-cursor"></div>
-          <span class="prompt-hint">click to copy</span>
-        </div>
       </div>
-
       <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/ui Compare 3 font directions for my landing page — load them and let me switch">
         <div class="prompt-card-top">
           <span class="prompt-tag tag-font">Font</span>
@@ -718,12 +667,7 @@
           </span>
         </div>
         <p class="prompt-text"><span class="prompt-slash">/ui</span> Compare <span class="highlight">3 font directions</span> for my landing page — load them and let me switch</p>
-        <div class="prompt-card-footer">
-          <div class="prompt-cursor"></div>
-          <span class="prompt-hint">click to copy</span>
-        </div>
       </div>
-
       <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/ui Redesign my pricing section — give me 2 layout options side by side">
         <div class="prompt-card-top">
           <span class="prompt-tag tag-layout">Layout</span>
@@ -735,12 +679,7 @@
           </span>
         </div>
         <p class="prompt-text"><span class="prompt-slash">/ui</span> Redesign my <span class="highlight">pricing section</span> — give me 2 layout options side by side</p>
-        <div class="prompt-card-footer">
-          <div class="prompt-cursor"></div>
-          <span class="prompt-hint">click to copy</span>
-        </div>
       </div>
-
       <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/ui Build a dark SaaS landing page with 3 different style directions I can compare">
         <div class="prompt-card-top">
           <span class="prompt-tag tag-full">Full page</span>
@@ -752,12 +691,7 @@
           </span>
         </div>
         <p class="prompt-text"><span class="prompt-slash">/ui</span> Build a <span class="highlight">dark SaaS landing page</span> with 3 different style directions I can compare</p>
-        <div class="prompt-card-footer">
-          <div class="prompt-cursor"></div>
-          <span class="prompt-hint">click to copy</span>
-        </div>
       </div>
-
       <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/ui Give me a light/dark/system theme switcher for my app — 3 palette options">
         <div class="prompt-card-top">
           <span class="prompt-tag tag-theme">Theme</span>
@@ -769,16 +703,9 @@
           </span>
         </div>
         <p class="prompt-text"><span class="prompt-slash">/ui</span> Give me a <span class="highlight">light / dark / system</span> theme switcher for my app — 3 palette options</p>
-        <div class="prompt-card-footer">
-          <div class="prompt-cursor"></div>
-          <span class="prompt-hint">click to copy</span>
-        </div>
       </div>
-
     </div>
-
-    <p class="prompts-note">After the agent generates options, use the <strong style="color: var(--muted);">Roid Tool bar</strong> in the browser to flip through them and pick a winner.</p>
-
+    <p class="prompts-note">Click any card to copy the prompt.</p>
   </section>
 
   <div class="prompt-toast" id="promptToast">Prompt copied to clipboard</div>
