@@ -149,7 +149,7 @@
   [data-panel] {
     display: flex;
     flex-direction: row;
-    align-items: stretch;
+    align-items: center;
     height: 44px;
     min-width: 0;
     border-radius: 14px;
@@ -186,6 +186,16 @@
     opacity: 0.45;
     cursor: default;
   }
+  [data-divider] {
+    flex-shrink: 0;
+    width: 1px;
+    height: 56%;
+    max-height: 20px;
+    align-self: center;
+    margin: 0 2px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 0.5px;
+  }
   [data-center] {
     min-width: 0;
     display: flex;
@@ -214,13 +224,41 @@
     min-width: 0;
     flex: 1;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: -0.01em;
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: #f4f4f5;
+    color: rgba(255, 255, 255, 0.88);
+  }
+  [data-measure-wrap] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    visibility: hidden;
+    pointer-events: none;
+    width: max-content;
+    max-width: none;
+    height: auto;
+    overflow: visible;
+    white-space: nowrap;
+  }
+  [data-measure-wrap] [data-measure] {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  [data-measure-pos] {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  [data-measure-lbl] {
+    font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
   }
   @media (max-width: 640px) {
     :host {
@@ -237,18 +275,26 @@
         <path d="M0.75 3L4.25 5.25L4.25 0.75L0.75 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
       </svg>
     </button>
+    <span data-divider aria-hidden="true"></span>
     <div data-center>
       <span data-meta>
         <span data-pos></span>
         <span data-lbl></span>
       </span>
     </div>
+    <span data-divider aria-hidden="true"></span>
     <button type="button" data-nav data-next aria-label="Next variant">
       <svg viewBox="0 0 5 6" fill="currentColor" width="6" height="7" aria-hidden="true">
         <path d="M4.25 3L0.75 5.25L0.75 0.75L4.25 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
       </svg>
     </button>
   </section>
+  <div data-measure-wrap aria-hidden="true">
+    <span data-measure>
+      <span data-measure-pos></span>
+      <span data-measure-lbl></span>
+    </span>
+  </div>
 </dialog>`;
 
       const r = this.root;
@@ -257,6 +303,9 @@
       this.next = r.querySelector("[data-next]");
       this.posText = r.querySelector("[data-pos]");
       this.labelText = r.querySelector("[data-lbl]");
+      this.metaEl = r.querySelector("[data-meta]");
+      this.measurePos = r.querySelector("[data-measure-pos]");
+      this.measureLbl = r.querySelector("[data-measure-lbl]");
 
       this.dialog.addEventListener("keydown", this.onKeyDown);
       this.dialog.addEventListener("pointerdown", (ev) => {
@@ -344,6 +393,24 @@
       this._focusDialog();
     }
 
+    _measureMetaMinWidth() {
+      const g = this.group;
+      if (!g || !this.measurePos || !this.measureLbl || !this.metaEl) return;
+      const n = g.options.length;
+      let maxPosW = 0;
+      for (let i = 0; i < n; i++) {
+        this.measurePos.textContent = `${i + 1}/${n}`;
+        maxPosW = Math.max(maxPosW, this.measurePos.scrollWidth);
+      }
+      let maxLblW = 0;
+      for (const o of g.options) {
+        this.measureLbl.textContent = o.label;
+        maxLblW = Math.max(maxLblW, this.measureLbl.scrollWidth);
+      }
+      const gap = 10;
+      this.metaEl.style.minWidth = `${Math.ceil(maxPosW + gap + maxLblW)}px`;
+    }
+
     _render() {
       const g = this.group;
       if (!g) return;
@@ -354,6 +421,12 @@
       this.labelText.textContent = g.options[i].label;
       const multi = n > 1;
       this.prev.disabled = this.next.disabled = !multi;
+      this._measureMetaMinWidth();
+      if (typeof document !== "undefined" && document.fonts?.ready) {
+        document.fonts.ready.then(() => {
+          if (this.group === g) this._measureMetaMinWidth();
+        });
+      }
     }
 
     _move(delta) {
@@ -475,7 +548,7 @@
     const sheet = Object.assign(document.createElement("link"), {
       rel: "stylesheet",
       href:
-        "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Outfit:wght@500;600&display=swap",
+        "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Outfit:wght@400;500;600&display=swap",
     });
     document.head.append(preG, preS, sheet);
   })();
