@@ -6,7 +6,6 @@
   const WRAPPER_SEL = "[data-roid-tool]";
   const TAG = "roid-tool";
   const MIN_OPTIONS = 2;
-  const MAX_OPTIONS = 5;
 
   const ATTR_WATCH = [
     "data-roid-tool",
@@ -56,9 +55,7 @@
     );
     if (raw.length < MIN_OPTIONS) return null;
 
-    const overflow = raw.length > MAX_OPTIONS;
-    const slice = raw.slice(0, MAX_OPTIONS);
-    const options = slice.map((el, i) => ({
+    const options = raw.map((el, i) => ({
       label: trim(el.getAttribute("data-roid-option"), `Option ${i + 1}`),
       element: el,
     }));
@@ -67,7 +64,6 @@
       label: trim(toolEl.getAttribute("data-roid-tool"), "Decision"),
       toolEl,
       options,
-      overflow,
       activeIndex: Math.max(
         0,
         options.findIndex((o) => !o.element.hidden)
@@ -90,7 +86,7 @@
     ));
   }
 
-  /** Hide direct children with data-roid-option that are not in the active list (e.g. beyond max 5). */
+  /** Hide direct children with data-roid-option that are not in the active list. */
   function hideExcludedOptions(toolEl, options) {
     const keep = new Set(options.map((o) => o.element));
     for (const child of toolEl.children) {
