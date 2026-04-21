@@ -59,10 +59,10 @@
       margin: 0 auto;
     }
     .c-main-inner {
-      max-width: 980px;
-      margin: 0 auto;
+      width: fit-content;
+      max-width: min(980px, 100%);
+      margin-inline: auto;
       text-align: left;
-      transform: translateX(clamp(16px, 4.5vw, 72px));
     }
     .c-headline {
       font-family: 'Bricolage Grotesque', sans-serif;
@@ -71,6 +71,8 @@
       line-height: 0.88;
       letter-spacing: -0.045em;
       text-transform: uppercase;
+      width: max-content;
+      max-width: 100%;
     }
     .c-headline em {
       font-style: normal;
@@ -167,9 +169,13 @@
         padding: clamp(12px, 3vw, 24px) clamp(20px, 4vw, 28px);
       }
       .c-main-inner {
-        transform: none;
         width: 100%;
+        max-width: 100%;
         text-align: center;
+      }
+      .c-headline {
+        width: 100%;
+        max-width: 100%;
       }
       .c-roids-sub {
         flex-direction: column;
