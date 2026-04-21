@@ -18,6 +18,7 @@
     html { -webkit-font-smoothing: antialiased; }
     body {
       min-height: 100vh;
+      min-height: 100dvh;
       background: #f3f3ee;
       color: #0a0a0a;
       font-family: 'Bricolage Grotesque', 'Space Grotesk', sans-serif;
@@ -38,7 +39,7 @@
     .c-top {
       position: relative; z-index: 2;
       display: flex; justify-content: flex-end; align-items: center;
-      padding: 24px 36px;
+      padding: 24px clamp(20px, 3vw, 36px);
       font-family: 'Space Grotesk', sans-serif;
       font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
     }
@@ -54,7 +55,7 @@
 
     .c-main {
       position: relative; z-index: 2;
-      padding: 56px 36px 72px;
+      padding: clamp(32px, 5vw, 56px) clamp(24px, 4vw, 36px) clamp(48px, 7vw, 72px);
       margin: 0 auto;
     }
     .c-main-inner {
@@ -66,8 +67,8 @@
     .c-headline {
       font-family: 'Bricolage Grotesque', sans-serif;
       font-weight: 800;
-      font-size: clamp(56px, 13vw, 180px);
-      line-height: 0.86;
+      font-size: clamp(44px, 12.5vw, 180px);
+      line-height: 0.88;
       letter-spacing: -0.045em;
       text-transform: uppercase;
     }
@@ -105,8 +106,8 @@
       left: 50%;
       margin-left: -50vw;
       box-sizing: border-box;
-      margin-top: 44px;
-      padding-top: 28px;
+      margin-top: clamp(28px, 4vw, 44px);
+      padding: clamp(20px, 3vw, 28px) clamp(24px, 4vw, 36px) 0;
       gap: 18px;
     }
     .c-cmd-row::before {
@@ -121,7 +122,7 @@
       border: 1.5px solid #0a0a0a;
       background: #0a0a0a; color: #f3f3ee;
       width: fit-content;
-      max-width: calc(100vw - 48px);
+      max-width: 100%;
     }
     .c-cmd-text {
       flex: 0 1 auto;
@@ -130,9 +131,7 @@
       letter-spacing: .02em;
       line-height: 1.45;
       padding: 12px 14px;
-      white-space: normal;
-      overflow-wrap: anywhere;
-      word-break: break-word;
+      white-space: nowrap;
       border-right: 1.5px solid #f3f3ee;
       text-align: left;
     }
@@ -150,35 +149,77 @@
     .c-copy:hover  { background: #c6ff00; }
     .c-copy.copied { background: #0a0a0a; color: #f3f3ee; border-left: 1.5px solid #f3f3ee; }
 
-    @media (min-width: 640px) {
-      .c-cmd-text {
-        white-space: nowrap;
-        overflow-wrap: normal;
-        word-break: normal;
-      }
-    }
-
     @media (max-width: 720px) {
-      .c-main-inner { transform: none; }
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+      .c-top {
+        flex-shrink: 0;
+      }
+      .c-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: stretch;
+        min-height: 0;
+        padding: clamp(12px, 3vw, 24px) clamp(20px, 4vw, 28px);
+      }
+      .c-main-inner {
+        transform: none;
+        width: 100%;
+        text-align: center;
+      }
       .c-roids-sub {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
+        align-items: center;
+        gap: 14px;
       }
-      .c-sub { max-width: 100%; }
-      .c-cmd {
-        flex-direction: column;
-        width: 100%;
+      .c-sub {
         max-width: 100%;
+        font-size: 14px;
+        text-align: center;
+      }
+      .c-top .c-tag { padding: 5px 10px; font-size: 11px; }
+      .c-top .c-tag svg { width: 11px; height: 11px; }
+
+      .c-cmd-row {
+        margin-top: clamp(20px, 4vw, 32px);
+        padding-top: clamp(16px, 3vw, 24px);
+      }
+      .c-cmd {
+        flex-direction: row;
+        width: 100%;
+        max-width: 420px;
+        margin: 0 auto;
+        border-radius: 999px;
+        overflow: hidden;
+        padding: 4px;
+        gap: 6px;
       }
       .c-cmd-text {
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 10px 14px;
+        font-size: 11.5px;
         border-right: none;
-        border-bottom: 1.5px solid #f3f3ee;
-        text-align: center;
-        white-space: normal;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-        padding: 14px;
+        text-align: left;
+      }
+      .c-copy {
+        background: #c6ff00;
+        color: #0a0a0a;
+        border-radius: 999px;
+        padding: 0 16px;
+        font-size: 10.5px;
+      }
+      .c-copy.copied {
+        background: #f3f3ee;
+        color: #0a0a0a;
+        border-left: none;
       }
     }
   </style>
@@ -208,9 +249,7 @@
       <div class="c-cmd">
         <span class="c-cmd-text">
           <span class="pfx">$</span>
-          npx skills add
-          <span class="hi">https://github.com/developing-gamer/roids</span>
-          --skill roids
+          npx skills add <span class="hi">https://github.com/developing-gamer/roids</span> --skill roids
         </span>
         <button class="c-copy js-copy" type="button" aria-label="Copy command">
           <span class="label">Copy</span>
