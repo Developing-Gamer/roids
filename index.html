@@ -104,36 +104,39 @@
       gap: 0;
     }
 
-    /* badge */
-    .badge {
+    /* badge — open source (monochrome) */
+    .badge.badge-oss {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: var(--accent-dim);
-      border: 1px solid rgba(198, 255, 0, 0.22);
+      background: #0a0a0a;
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: 100px;
-      padding: 5px 14px 5px 10px;
+      padding: 6px 14px 6px 10px;
       font-family: 'Azeret Mono', monospace;
       font-size: 11px;
       font-weight: 400;
-      color: var(--accent);
+      color: #e8e8e6;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       margin-bottom: 36px;
+      text-decoration: none;
+      transition: border-color 0.2s ease, background 0.2s ease;
       animation: fade-up 0.55s 0.1s ease both;
     }
 
-    .badge-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-      animation: dot-blink 2s ease-in-out infinite;
+    .badge.badge-oss:hover {
+      border-color: rgba(255, 255, 255, 0.28);
+      background: #121212;
+      color: #fff;
     }
 
-    @keyframes dot-blink {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.35; }
+    .badge-oss-icon {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      fill: currentColor;
+      opacity: 0.95;
     }
 
     /* headline */
@@ -290,247 +293,6 @@
       }
     }
 
-    /* ── prompts section ── */
-    .prompts-section {
-      position: relative;
-      z-index: 10;
-      padding: 0 24px 140px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .section-label {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 48px;
-    }
-
-    .section-label-line {
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, var(--border-bright), transparent);
-    }
-
-    .section-label-text {
-      font-family: 'Azeret Mono', monospace;
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-
-    .prompts-header {
-      text-align: center;
-      margin-bottom: 64px;
-    }
-
-    .prompts-title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: clamp(28px, 4vw, 48px);
-      letter-spacing: -0.03em;
-      color: var(--text);
-      margin-bottom: 14px;
-    }
-
-    .prompts-subtitle {
-      font-family: 'Azeret Mono', monospace;
-      font-size: 14px;
-      font-weight: 300;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .prompts-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-
-    .prompt-card {
-      background: var(--surface);
-      border: 1px solid var(--border-bright);
-      border-radius: 12px;
-      padding: 20px;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s, transform 0.15s;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .prompt-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--accent-dim);
-      opacity: 0;
-      transition: opacity 0.2s;
-      pointer-events: none;
-    }
-
-    .prompt-card:hover {
-      border-color: rgba(198, 255, 0, 0.28);
-      transform: translateY(-2px);
-    }
-
-    .prompt-card:hover::before {
-      opacity: 1;
-    }
-
-    .prompt-card-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .prompt-tag {
-      font-family: 'Azeret Mono', monospace;
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 3px 9px;
-      border-radius: 100px;
-      flex-shrink: 0;
-    }
-
-    .prompt-tag.tag-layout {
-      background: rgba(198, 255, 0, 0.1);
-      color: var(--accent);
-      border: 1px solid rgba(198, 255, 0, 0.2);
-    }
-
-    .prompt-tag.tag-theme {
-      background: rgba(120, 180, 255, 0.1);
-      color: #7db4ff;
-      border: 1px solid rgba(120, 180, 255, 0.2);
-    }
-
-    .prompt-tag.tag-font {
-      background: rgba(255, 180, 100, 0.1);
-      color: #ffb86c;
-      border: 1px solid rgba(255, 180, 100, 0.2);
-    }
-
-    .prompt-tag.tag-full {
-      background: rgba(180, 120, 255, 0.1);
-      color: #c084fc;
-      border: 1px solid rgba(180, 120, 255, 0.2);
-    }
-
-    .prompt-copy-icon {
-      opacity: 0;
-      transition: opacity 0.18s;
-      color: var(--muted);
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    .prompt-card:hover .prompt-copy-icon {
-      opacity: 1;
-    }
-
-    .prompt-copy-icon.copied {
-      opacity: 1;
-      color: var(--accent);
-    }
-
-    .prompt-copy-icon svg {
-      width: 13px;
-      height: 13px;
-      display: block;
-    }
-
-    .prompt-text {
-      font-family: 'Azeret Mono', monospace;
-      font-size: 13px;
-      font-weight: 300;
-      color: var(--text);
-      line-height: 1.55;
-      letter-spacing: 0.01em;
-      flex: 1;
-    }
-
-    .prompt-text .prompt-slash {
-      color: var(--accent);
-      font-weight: 500;
-      margin-right: 0.35em;
-    }
-
-    .prompt-text .highlight {
-      color: var(--accent);
-      font-weight: 400;
-    }
-
-    .prompts-note {
-      text-align: center;
-      margin-top: 40px;
-      font-family: 'Azeret Mono', monospace;
-      font-size: 12px;
-      color: var(--muted-2);
-      letter-spacing: 0.04em;
-    }
-
-    .prompts-note a {
-      color: var(--muted);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      transition: color 0.2s;
-    }
-
-    .prompts-note a:hover {
-      color: var(--accent);
-    }
-
-    /* toast */
-    .prompt-toast {
-      position: fixed;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%) translateY(12px);
-      background: var(--surface);
-      border: 1px solid var(--border-bright);
-      border-radius: 8px;
-      padding: 10px 18px;
-      font-family: 'Azeret Mono', monospace;
-      font-size: 12px;
-      color: var(--text);
-      letter-spacing: 0.04em;
-      z-index: 200;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s, transform 0.2s;
-    }
-
-    .prompt-toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    @media (max-width: 800px) {
-      .prompts-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 560px) {
-      .prompts-section {
-        padding: 0 16px 100px;
-      }
-      .prompts-grid {
-        grid-template-columns: 1fr;
-      }
-      .prompt-copy-icon {
-        opacity: 1;
-      }
-    }
   </style>
 </head>
 <body>
@@ -543,10 +305,16 @@
   <!-- hero -->
   <section class="hero">
 
-    <div class="badge">
-      <span class="badge-dot"></span>
-      AI Design Toolkit
-    </div>
+    <a
+      href="https://github.com/developing-gamer/roids"
+      class="badge badge-oss"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Open source — Roids on GitHub"
+    >
+      <svg class="badge-oss-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.235-3.225-.135-.3-.54-1.53.105-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.645 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      Open source
+    </a>
 
     <h1 class="headline">
       AI Design Engineer<br />on <em>Roids</em>
@@ -564,7 +332,7 @@
           <span class="cmd-highlight">https://github.com/developing-gamer/roids</span>
           --skill roids
         </span>
-        <button class="copy-btn" id="copyBtn" onclick="copyCommand()" aria-label="Copy command">
+        <button class="copy-btn" id="copyBtn" type="button" onclick="copyCommand()" aria-label="Copy command">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
             <rect x="5" y="5" width="9" height="9" rx="1.5"/>
             <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
@@ -575,96 +343,6 @@
     </div>
 
   </section>
-
-  <!-- prompts section -->
-  <section class="prompts-section">
-    <div class="section-label">
-      <span class="section-label-line"></span>
-      <span class="section-label-text">How to use it</span>
-      <span class="section-label-line" style="background: linear-gradient(270deg, var(--border-bright), transparent);"></span>
-    </div>
-    <div class="prompts-header">
-      <h2 class="prompts-title">Just ask your agent</h2>
-      <p class="prompts-subtitle">Prompts you can send after installing the skill</p>
-    </div>
-    <div class="prompts-grid" id="promptsGrid">
-      <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/roids Give me 3 hero section directions to compare in the browser">
-        <div class="prompt-card-top">
-          <span class="prompt-tag tag-layout">Layout</span>
-          <span class="prompt-copy-icon">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
-              <rect x="5" y="5" width="9" height="9" rx="1.5"/>
-              <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
-            </svg>
-          </span>
-        </div>
-        <p class="prompt-text"><span class="prompt-slash">/roids</span> Give me <span class="highlight">3 hero section</span> directions to compare in the browser</p>
-      </div>
-      <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/roids Show me 4 layout directions for my dashboard — I want to pick one">
-        <div class="prompt-card-top">
-          <span class="prompt-tag tag-theme">Theme</span>
-          <span class="prompt-copy-icon">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
-              <rect x="5" y="5" width="9" height="9" rx="1.5"/>
-              <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
-            </svg>
-          </span>
-        </div>
-        <p class="prompt-text"><span class="prompt-slash">/roids</span> Show me <span class="highlight">4 layout</span> directions for my dashboard — I want to pick one</p>
-      </div>
-      <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/roids Compare 3 hero layout directions for my landing page — load them and let me switch">
-        <div class="prompt-card-top">
-          <span class="prompt-tag tag-font">Font</span>
-          <span class="prompt-copy-icon">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
-              <rect x="5" y="5" width="9" height="9" rx="1.5"/>
-              <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
-            </svg>
-          </span>
-        </div>
-        <p class="prompt-text"><span class="prompt-slash">/roids</span> Compare <span class="highlight">3 hero layout</span> directions for my landing page — load them and let me switch</p>
-      </div>
-      <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/roids Redesign my pricing section — give me 2 layout options side by side">
-        <div class="prompt-card-top">
-          <span class="prompt-tag tag-layout">Layout</span>
-          <span class="prompt-copy-icon">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
-              <rect x="5" y="5" width="9" height="9" rx="1.5"/>
-              <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
-            </svg>
-          </span>
-        </div>
-        <p class="prompt-text"><span class="prompt-slash">/roids</span> Redesign my <span class="highlight">pricing section</span> — give me 2 layout options side by side</p>
-      </div>
-      <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/roids Build a dark SaaS landing page with 3 different style directions I can compare">
-        <div class="prompt-card-top">
-          <span class="prompt-tag tag-full">Full page</span>
-          <span class="prompt-copy-icon">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
-              <rect x="5" y="5" width="9" height="9" rx="1.5"/>
-              <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
-            </svg>
-          </span>
-        </div>
-        <p class="prompt-text"><span class="prompt-slash">/roids</span> Build a <span class="highlight">dark SaaS landing page</span> with 3 different style directions I can compare</p>
-      </div>
-      <div class="prompt-card" onclick="copyPrompt(this)" data-prompt="/roids Give me 3 different nav layout directions for my app — I want to compare and pick one">
-        <div class="prompt-card-top">
-          <span class="prompt-tag tag-theme">Theme</span>
-          <span class="prompt-copy-icon">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
-              <rect x="5" y="5" width="9" height="9" rx="1.5"/>
-              <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
-            </svg>
-          </span>
-        </div>
-        <p class="prompt-text"><span class="prompt-slash">/roids</span> Give me <span class="highlight">3 different nav layout</span> directions for my app — I want to compare and pick one</p>
-      </div>
-    </div>
-    <p class="prompts-note">Click any card to copy the prompt.</p>
-  </section>
-
-  <div class="prompt-toast" id="promptToast">Prompt copied to clipboard</div>
 
   <script>
     /* ── vertical shooting streaks ── */
@@ -761,40 +439,8 @@
       requestAnimationFrame(tick);
     })();
 
-    const PROMPT_COPY_SVG = `
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-        <rect x="5" y="5" width="9" height="9" rx="1.5"/>
-        <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
-      </svg>`;
-    const PROMPT_TICK_SVG = `
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-        <polyline points="2,8 6,12 14,4"/>
-      </svg>`;
-
-    function copyPrompt(card) {
-      const text = card.dataset.prompt;
-      const iconEl = card.querySelector('.prompt-copy-icon');
-      navigator.clipboard.writeText(text).then(() => {
-        if (copyPrompt._restoreIcon) copyPrompt._restoreIcon();
-        iconEl.classList.add('copied');
-        iconEl.innerHTML = PROMPT_TICK_SVG;
-        copyPrompt._restoreIcon = () => {
-          iconEl.classList.remove('copied');
-          iconEl.innerHTML = PROMPT_COPY_SVG;
-          copyPrompt._restoreIcon = null;
-        };
-        clearTimeout(copyPrompt._iconTimer);
-        copyPrompt._iconTimer = setTimeout(copyPrompt._restoreIcon, 2200);
-
-        const toast = document.getElementById('promptToast');
-        toast.classList.add('show');
-        clearTimeout(copyPrompt._timer);
-        copyPrompt._timer = setTimeout(() => toast.classList.remove('show'), 2000);
-      });
-    }
-
     function copyCommand() {
-      const cmd = 'npx skills add https://github.com/developing-gamer/roids --skill ui';
+      const cmd = 'npx skills add https://github.com/developing-gamer/roids --skill roids';
       navigator.clipboard.writeText(cmd).then(() => {
         const btn = document.getElementById('copyBtn');
         btn.classList.add('copied');
