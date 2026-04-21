@@ -15,6 +15,9 @@
 
   const trim = (v, fb) => (v ?? "").trim() || fb;
 
+  const fontsReadyPromise =
+    typeof document !== "undefined" ? document.fonts?.ready : null;
+
   /** True when focus is in a control that should keep Left/Right for itself. */
   function isArrowKeyReservedForTarget(el) {
     if (!(el instanceof Element)) return false;
@@ -87,14 +90,38 @@
   }
 
   /** Hide direct children with data-roid-option that are not in the active list. */
-  function hideExcludedOptions(toolEl, options) {
+  function hideExcludedOptions(toolEl, options, tracked) {
     const keep = new Set(options.map((o) => o.element));
     for (const child of toolEl.children) {
       if (!child.hasAttribute("data-roid-option")) continue;
       if (keep.has(child)) continue;
-      child.hidden = true;
       child.removeAttribute("data-roid-active");
-      if (child.style.display !== "none") child.style.display = "none";
+      if (!child.hidden) {
+        tracked?.add(child);
+        child.hidden = true;
+      }
+      if (child.style.display !== "none") {
+        tracked?.add(child);
+        child.style.display = "none";
+      }
+    }
+  }
+
+  /** When the wrapper exists but has fewer than MIN_OPTIONS, clear bar state and undo hiding. */
+  function resetInvalidWrapper() {
+    const toolEl = document.querySelector(WRAPPER_SEL);
+    if (!toolEl) return;
+    const raw = Array.from(toolEl.children).filter((el) =>
+      el.hasAttribute("data-roid-option")
+    );
+    if (raw.length >= MIN_OPTIONS) return;
+    toolEl.removeAttribute("data-roid-active-option");
+    toolEl.removeAttribute("data-roid-active-option-index");
+    for (const child of toolEl.children) {
+      if (!child.hasAttribute("data-roid-option")) continue;
+      child.removeAttribute("data-roid-active");
+      child.hidden = false;
+      child.style.removeProperty("display");
     }
   }
 
@@ -342,7 +369,6 @@
     connectedCallback() {
       document.addEventListener("keydown", this.onDocumentKeyDown, true);
       if (!this.dialog.open) this.dialog.show();
-      this._focusDialog();
     }
 
     disconnectedCallback() {
@@ -399,19 +425,12 @@
       }
     }
 
-    _focusDialog() {
-      const ae = this.root.activeElement;
-      if (ae instanceof HTMLElement && ae !== this.dialog) ae.blur();
-      this.dialog.focus({ preventScroll: true });
-    }
-
     update(group, onSelect) {
       this.group = group;
       this.onSelect = onSelect;
       this._syncWrapperAttrs();
       this._render();
       if (!this.dialog.open) this.dialog.show();
-      this._focusDialog();
     }
 
     _measureMetaMinWidth() {
@@ -447,8 +466,8 @@
       const multi = n > 1;
       this.prev.disabled = this.next.disabled = !multi;
       this._measureMetaMinWidth();
-      if (typeof document !== "undefined" && document.fonts?.ready) {
-        document.fonts.ready.then(() => {
+      if (fontsReadyPromise) {
+        fontsReadyPromise.then(() => {
           if (this.group === g) this._measureMetaMinWidth();
         });
       }
@@ -462,7 +481,6 @@
       const opt = g.options[nextIdx];
       if (opt) {
         this.onSelect?.(opt);
-        this._focusDialog();
       }
     }
 
@@ -496,12 +514,13 @@
   function sync() {
     const state = parseTool();
     if (!state) {
+      resetInvalidWrapper();
       host?.remove();
       host = null;
       return;
     }
 
-    hideExcludedOptions(state.toolEl, state.options);
+    hideExcludedOptions(state.toolEl, state.options, hiddenTracked);
     applyVisibility(
       state,
       state.options[resolveActiveIndex(state)] ?? state.options[0],
@@ -539,11 +558,17 @@
           ) {
             continue;
           }
+          const name = rec.attributeName;
           if (
+            name === "data-roid-tool" ||
+            name === "data-roid-option"
+          ) {
+            return schedule();
+          }
+          if (
+            name === "hidden" &&
             rec.target instanceof Element &&
-            (touchesRoid(rec.target) ||
-              rec.target.matches(WRAPPER_SEL) ||
-              rec.target.hasAttribute("data-roid-option"))
+            touchesRoid(rec.target)
           ) {
             return schedule();
           }

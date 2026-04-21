@@ -116,7 +116,7 @@ Use exactly one preview wrapper per page:
 
 | Input | Required | Meaning |
 |---|---|---|
-| `data-roid-tool` | Yes | Short label for the decision surface (shown as a hint on the position counter) |
+| `data-roid-tool` | Yes | Short label for the decision surface (exposed as the **tooltip** on the index counter and in the bar’s `aria-label`; omitting it falls back to a default) |
 | `data-roid-option` | Yes, 2+ siblings | One **direct child** per variant; attribute value = label in Roids |
 
 ### Rules
@@ -193,7 +193,7 @@ When the user picks a winner:
 1. Keep only the chosen layout direction.
 2. Remove all unused layout options.
 3. Remove `<script src="https://tryroids.com/roid-tool.js"></script>`.
-4. Remove `data-roid-tool`, `data-roid-option`, and `data-roid-active` unless the user explicitly wants them preserved.
+4. Remove `data-roid-tool`, `data-roid-option`, `data-roid-active`, and runtime-written wrapper state (`data-roid-active-option`, `data-roid-active-option-index`) unless the user explicitly wants them preserved.
 5. Remove preview-only labels, wrappers, comments, and temporary styles.
 6. Convert the winning result into normal production code.
 
