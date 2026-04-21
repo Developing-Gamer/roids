@@ -16,6 +16,28 @@
 
   const trim = (v, fb) => (v ?? "").trim() || fb;
 
+  /** True when focus is in a control that should keep Left/Right for itself. */
+  function isArrowKeyReservedForTarget(el) {
+    if (!(el instanceof Element)) return false;
+    if (el.isContentEditable || el.closest("[contenteditable='true']")) return true;
+    if (el.closest("textarea, select")) return true;
+    const inp = el.closest("input");
+    if (!inp) return false;
+    const type = (inp.type || "text").toLowerCase();
+    const nonText = [
+      "button",
+      "checkbox",
+      "color",
+      "file",
+      "hidden",
+      "image",
+      "radio",
+      "reset",
+      "submit",
+    ];
+    return !nonText.includes(type);
+  }
+
   /** True if node is or contains roid markup we care about */
   function touchesRoid(node) {
     return (
@@ -269,7 +291,7 @@
   }
 </style>
 <dialog aria-label="Roid Tool" tabindex="-1">
-  <section data-panel>
+  <section data-panel role="toolbar" aria-orientation="horizontal">
     <button type="button" data-nav data-previous aria-label="Previous variant">
       <svg viewBox="0 0 5 6" fill="currentColor" width="6" height="7" aria-hidden="true">
         <path d="M0.75 3L4.25 5.25L4.25 0.75L0.75 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
@@ -299,6 +321,7 @@
 
       const r = this.root;
       this.dialog = r.querySelector("dialog");
+      this.panel = r.querySelector("[data-panel]");
       this.prev = r.querySelector("[data-previous]");
       this.next = r.querySelector("[data-next]");
       this.posText = r.querySelector("[data-pos]");
@@ -307,7 +330,6 @@
       this.measurePos = r.querySelector("[data-measure-pos]");
       this.measureLbl = r.querySelector("[data-measure-lbl]");
 
-      this.dialog.addEventListener("keydown", this.onKeyDown);
       this.dialog.addEventListener("pointerdown", (ev) => {
         if (
           ev.button === 0 &&
@@ -322,11 +344,14 @@
     }
 
     connectedCallback() {
+      document.addEventListener("keydown", this.onDocumentKeyDown, true);
       if (!this.dialog.open) this.dialog.show();
       this._focusDialog();
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+      document.removeEventListener("keydown", this.onDocumentKeyDown, true);
+    }
 
     _toolEl() {
       return this.group?.toolEl ?? null;
@@ -419,6 +444,10 @@
       this.posText.textContent = `${i + 1}/${n}`;
       this.posText.title = g.label;
       this.labelText.textContent = g.options[i].label;
+      this.panel?.setAttribute(
+        "aria-label",
+        g.label ? `${g.label}: choose variant` : "Choose variant"
+      );
       const multi = n > 1;
       this.prev.disabled = this.next.disabled = !multi;
       this._measureMetaMinWidth();
@@ -441,9 +470,15 @@
       }
     }
 
-    onKeyDown = (ev) => {
-      if (!this.group || ev.metaKey || ev.ctrlKey || ev.altKey) return;
+    /**
+     * Arrow keys work from anywhere on the page (except text fields and similar)
+     * so users do not need focus on the bar.
+     */
+    onDocumentKeyDown = (ev) => {
+      if (!this.group || this.group.options.length <= 1) return;
+      if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
       if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+      if (isArrowKeyReservedForTarget(ev.target)) return;
       ev.preventDefault();
       this._move(ev.key === "ArrowRight" ? 1 : -1);
     };
