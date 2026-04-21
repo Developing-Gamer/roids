@@ -290,7 +290,7 @@
     }
   }
 </style>
-<dialog aria-label="Roid Tool" tabindex="-1">
+<dialog aria-label="Roids" tabindex="-1">
   <section data-panel role="toolbar" aria-orientation="horizontal">
     <button type="button" data-nav data-previous aria-label="Previous variant">
       <svg viewBox="0 0 5 6" fill="currentColor" width="6" height="7" aria-hidden="true">
