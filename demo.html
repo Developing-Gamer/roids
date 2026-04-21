@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roid Tool — demo</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, sans-serif;
+      background: #0f0f12;
+      color: #e4e4e7;
+    }
+    .hint {
+      padding: 24px;
+      text-align: center;
+      font-size: 14px;
+      color: #71717a;
+    }
+    [data-roid-option] {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 48px 24px 120px;
+      border-radius: 16px;
+      text-align: center;
+    }
+    [data-roid-option] h1 {
+      margin: 0 0 12px;
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+    [data-roid-option] p {
+      margin: 0;
+      line-height: 1.5;
+      color: #a1a1aa;
+    }
+    .a { background: linear-gradient(145deg, #1e1b4b, #312e81); }
+    .b { background: linear-gradient(145deg, #14532d, #166534); }
+    .c { background: linear-gradient(145deg, #4c0519, #881337); }
+  </style>
+</head>
+<body>
+  <p class="hint">Use the bar at the bottom — arrows or ← → — to switch variants.</p>
+
+  <main
+    data-roid-tool="Demo section"
+  >
+    <article class="a" data-roid-option="A — Indigo stack">
+      <h1>Variant A</h1>
+      <p>Indigo / violet mood. Your content would go here.</p>
+    </article>
+
+    <article class="b" data-roid-option="B — Forest card">
+      <h1>Variant B</h1>
+      <p>Green / natural mood. Same slot, different direction.</p>
+    </article>
+
+    <article class="c" data-roid-option="C — Rose panel">
+      <h1>Variant C</h1>
+      <p>Rose / warm accent. Pick a winner and ship one layout.</p>
+    </article>
+  </main>
+
+  <script src="./roid-tool.js"></script>
+</body>
+</html>

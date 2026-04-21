@@ -1,6 +1,6 @@
 ---
 name: ui
-description: Generate multiple UI, theme, or font directions. Agents must use `https://tryroids.com/roid-tool.js` plus the `data-roid-*` contract so the user compares variants in the official Roid Tool bar—not custom tabs or one-off UI. After a winner is chosen, remove preview scaffolding cleanly.
+description: Generate multiple UI directions to compare. Agents must use `https://tryroids.com/roid-tool.js` plus the `data-roid-*` contract so the user flips variants in the official Roid Tool bar—not custom tabs or one-off UI. After a winner is chosen, remove preview scaffolding cleanly.
 disable-model-invocation: true
 ---
 
@@ -10,15 +10,13 @@ Use this skill when the user wants to compare multiple UI directions before lock
 
 `SKILL.txt` is the source of truth. Follow this file exactly.
 
-**Non-negotiable:** Whenever you show **more than one** comparable direction (layout options, theme swatches, or font candidates), you **must** ship **`https://tryroids.com/roid-tool.js`** and wire it with the **`data-roid-*` markup** in this file. Do **not** invent alternate ways to flip between variants (custom tabs, accordions, `<select>`, radio groups, your own fixed bottom bar, etc.). Those break the shared preview contract and hide state from tools that read `data-roid-active-*` and `roid-tool-change` events.
+**Non-negotiable:** Whenever you show **more than one** comparable direction (layout or composition options), you **must** ship **`https://tryroids.com/roid-tool.js`** and wire it with the **`data-roid-*` markup** in this file. Do **not** invent alternate ways to flip between variants (custom tabs, accordions, `<select>`, radio groups, your own fixed bottom bar, etc.). Those break the shared preview contract and hide state from tools that read `data-roid-active-*` and `roid-tool-change` events.
 
 ## When To Use
 
 Use this skill when the user asks for:
 
-- 2 to 4 UI options for a section or component
-- several theme or palette directions to compare in-browser
-- several font directions to compare in-browser
+- 2 to 5 UI options for a section or component
 - a preview-first workflow where the user chooses a winner before cleanup
 
 Do not use this skill for:
@@ -32,14 +30,13 @@ Do not use this skill for:
 When this skill is invoked:
 
 1. Find the exact target location.
-2. Decide whether the user needs layout variants, theme variants, font variants, or a combination.
-3. Generate only the options the user needs.
-4. Wire the preview with the Roid Tool contract below.
-5. Always load `https://tryroids.com/roid-tool.js` when showing multiple variants so the user can compare them in the browser.
-6. Never present variant comparisons without the Roid Tool script unless a higher-priority instruction explicitly forbids it.
-7. Tell the user how to preview and how to reply with a winner.
-8. When the user picks a winner, keep only that result.
-9. Remove all preview scaffolding before finishing.
+2. Generate only the options the user needs (between 2 and 5 inclusive).
+3. Wire the preview with the Roid Tool contract below.
+4. Always load `https://tryroids.com/roid-tool.js` when showing multiple variants so the user can compare them in the browser.
+5. Never present variant comparisons without the Roid Tool script unless a higher-priority instruction explicitly forbids it.
+6. Tell the user how to preview and how to reply with a winner.
+7. When the user picks a winner, keep only that result.
+8. Remove all preview scaffolding before finishing.
 
 ## Anti-patterns (do not do this)
 
@@ -47,7 +44,6 @@ If the user asked for comparable variants, **never**:
 
 - Build a **custom** “picker” or navigator for options (tabs, segmented controls, carousel dots, etc.) instead of the Roid Tool.
 - Stack variants vertically and tell the user to “scroll to compare” without **`roid-tool.js`**.
-- Use **inline buttons** or **dropdowns** you wrote to switch themes or fonts when the skill’s theme or font comparison mode applies—use **`[data-roid-themes]`** and **`data-roid-fonts`** with the script.
 - Omit **`<script src="https://tryroids.com/roid-tool.js"></script>`** “to save a line” or because you assumed a different preview pattern.
 
 The only acceptable exception is a **higher-priority instruction** that explicitly forbids third-party scripts or this URL; if so, say so to the user and agree on a fallback **before** implementing a custom UI.
@@ -63,7 +59,9 @@ Before generating options:
 
 ## Variant Rules
 
-Generate `2` to `4` materially different options only.
+Generate **2 to 5** materially different options only. Each option is one **direct child** of the wrapper with **`data-roid-option`**. The value of that attribute is the **label** shown between the prev/next arrows in the Roid Tool (this is how the agent names each variation).
+
+If you supply **more than five** `data-roid-option` siblings, the runtime only uses the **first five**; avoid relying on that—trim in your markup instead.
 
 Good differences:
 
@@ -80,18 +78,17 @@ Bad differences:
 - only font-size tweaks
 - only one color change
 
-Always label options clearly:
+Always label options clearly, for example:
 
-- `A - ...`
-- `B - ...`
-- `C - ...`
-- `D - ...`
+- `A — …`
+- `B — …`
+- `C — …`
 
 ## Roid Tool Contract
 
-**`https://tryroids.com/roid-tool.js` is the supported runtime.** It renders the bottom bar, syncs `data-roid-active-*` on the wrapper, dispatches `roid-tool-change`, and keeps behavior consistent across pages. **Do not replace it with your own script** for the same job.
+**`https://tryroids.com/roid-tool.js` is the supported runtime.** It renders the bottom bar (previous control, active label, next control), syncs `data-roid-active-*` on the wrapper, dispatches `roid-tool-change`, and keeps behavior consistent across pages. **Do not replace it with your own script** for the same job.
 
-The Roid Tool script is **mandatory** for any preview that shows **multiple** UI, theme, or font variations to the user. If you are presenting variants for comparison, you **must** include:
+The Roid Tool script is **mandatory** for any preview that shows **multiple** UI variations to the user. If you are presenting variants for comparison, you **must** include:
 
 ```html
 <script src="https://tryroids.com/roid-tool.js"></script>
@@ -102,30 +99,13 @@ The Roid Tool script is **mandatory** for any preview that shows **multiple** UI
 Use exactly one preview wrapper per page:
 
 ```html
-<section
-  data-roid-tool="Hero directions"
-  data-roid-fonts="Inter, Syne, Space Grotesk"
-  data-roid-font-target="#hero-copy"
->
-  <div data-roid-themes hidden>
-    <span
-      data-roid-theme="acid"
-      data-roid-theme-label="Acid"
-      data-roid-theme-accent="#c6ff00"
-    ></span>
-    <span
-      data-roid-theme="frost"
-      data-roid-theme-label="Frost"
-      data-roid-theme-accent="#7dd3fc"
-    ></span>
-  </div>
-
-  <article data-roid-option="A - Editorial hero">
-    ...
+<section data-roid-tool="Hero directions">
+  <article data-roid-option="A — Editorial hero">
+    …
   </article>
 
-  <article data-roid-option="B - Product-led hero">
-    ...
+  <article data-roid-option="B — Product-led hero">
+    …
   </article>
 </section>
 
@@ -136,66 +116,23 @@ Use exactly one preview wrapper per page:
 
 | Input | Required | Meaning |
 |---|---|---|
-| `data-roid-tool` | Yes | Label for the decision surface |
-| `data-roid-option` | Only for layout comparison | One direct child per layout option |
-| `data-roid-fonts` | Only for font comparison | Comma-separated font family names |
-| `data-roid-font-target` | No | CSS selector that receives `font-family`; defaults to the wrapper |
-| `[data-roid-themes]` | Only for theme comparison | Hidden direct child container for theme entries |
-| `data-roid-theme` | Inside `[data-roid-themes]` | Theme id written to `<html data-theme="...">` |
-| `data-roid-theme-label` | No | Human label shown in tool UI; defaults to the theme id |
-| `data-roid-theme-accent` | Yes for theme entries | Swatch color used by the tool |
+| `data-roid-tool` | Yes | Short label for the decision surface (shown as a hint on the position counter) |
+| `data-roid-option` | Yes, 2–5 siblings | One **direct child** per variant; attribute value = label in the tool |
 
 ### Rules
 
-- `data-roid-option` items must be direct children of the wrapper.
-- `[data-roid-themes]` must be a direct child of the wrapper.
-- Theme entries inside `[data-roid-themes]` may be any element type; the tool only reads their `data-roid-*` attributes.
+- `data-roid-option` items must be **direct children** of the `data-roid-tool` wrapper.
+- Provide **between 2 and 5** `data-roid-option` children. With fewer than two, the bar does not appear; with more than five, only the first five participate.
 - Inject `https://tryroids.com/roid-tool.js` exactly once. **Loading this script is not optional** when showing multiple variants.
 - If variants are being shown, **do not** skip the script and **do not** substitute a custom comparison UI unless a higher-priority instruction explicitly requires that.
-- Do not hardcode theme lists, font lists, or option labels inside JS. The agent must supply them in markup.
+- Do not hardcode option labels inside JS. The agent must supply them in markup (`data-roid-option="…"`).
 - Use semantic HTML for option roots where possible.
 - Avoid duplicate `id` values across layout options.
 - Use only one `data-roid-tool` wrapper per page.
 
 ## What The Tool Shows
 
-The bar appears only when the wrapper provides at least one comparison surface.
-
-| Agent supplies | Tool shows |
-|---|---|
-| 2 or more `data-roid-option` children only | Prev/next with the active option label in the center |
-| `[data-roid-themes]` only | Theme swatches only, always expanded |
-| `data-roid-fonts` only | Prev/next with the font control centered |
-| Layout + themes | Theme control on the left, layout nav in the center |
-| Layout + fonts | Layout nav in the center, font control on the right |
-| Themes + fonts | Theme control on the left, font control on the right |
-| Layout + themes + fonts | Theme left, layout center, font right |
-
-If the agent does not provide a surface, the tool must not show that control.
-
-## Theme Contract
-
-Use theme mode when the user wants palette comparison on the same UI.
-
-Theme rules:
-
-- Each `data-roid-theme` id should match a real page theme id written to `<html data-theme="...">`.
-- The page should use CSS tokens, not hardcoded per-component colors.
-- Every theme should define the same token set the page expects.
-- `data-roid-theme-accent` is required so the tool can render theme swatches without hardcoded colors.
-- The tool may write the chosen theme to `localStorage["roid-tool-theme"]`.
-- If avoiding flash matters, set `<html data-theme>` before paint in page code. The tool still syncs after load.
-
-## Font Contract
-
-Use font mode when the user wants to compare type directions before finalizing.
-
-Font rules:
-
-- Load the candidate fonts before `roid-tool.js` runs.
-- Use `display=swap`.
-- Font names in `data-roid-fonts` must exactly match the loaded font family names.
-- The first font is the default if no other valid selection is active.
+When the wrapper has **two to five** `data-roid-option` direct children, the bar shows **Previous**, the **active option’s label** (from `data-roid-option`), and **Next**, plus a small **index counter** (e.g. `2/4`). There are no theme or font controls.
 
 ## Selection State Contract
 
@@ -205,16 +142,12 @@ The tool must always mirror the current user choice so browser-aware agents can 
 
 The wrapper is the machine-readable state surface:
 
-- `data-roid-active-option`
-- `data-roid-active-option-index`
-- `data-roid-active-font`
-- `data-roid-active-theme`
+- `data-roid-active-option` — label string of the visible variant
+- `data-roid-active-option-index` — zero-based index of the visible variant
 
 ### DOM state
 
-- The visible layout option gets `data-roid-active`.
-- The chosen font is applied to the font target.
-- The chosen theme is applied to `<html data-theme="...">`.
+- The visible layout option has the attribute `data-roid-active`.
 
 ### Events
 
@@ -224,45 +157,43 @@ Recommended detail shape:
 
 ```js
 {
-  kind: "option" | "font" | "theme",
-  value: "...",
-  label: "...",
+  kind: "option",
+  value: "…",
+  label: "…",
   index: 0,
   tool: HTMLElement,
-  target: HTMLElement | null
+  target: HTMLElement,
+  element: HTMLElement
 }
 ```
 
 The runtime may also dispatch:
 
 - `roid-tool-option-change`
-- `roid-tool-font-change`
-- `roid-tool-theme-change`
 
 ## What To Tell The User After Generation
 
 After generating previews, tell the user:
 
-- that **`https://tryroids.com/roid-tool.js`** is included and drives the **Roid Tool bar** at the bottom
+- that **`https://tryroids.com/roid-tool.js`** is included and drives the **Roid Tool** at the bottom
 - where the options were inserted
-- how many options exist
-- which labels or themes or fonts they can try
+- how many options exist and how they are labeled
 - that they should reply with the winner they want to keep
 
 Example response shape:
 
 - I added 3 hero directions wired to **`roid-tool.js`**.
-- Refresh the page and use the **Roid Tool** at the bottom (from that script) to compare `A`, `B`, and `C`.
+- Refresh the page and use the **Roid Tool** at the bottom (from that script) to move between the labeled variants.
 - Reply with the winner you want to keep.
 
 ## Finalization Rules
 
 When the user picks a winner:
 
-1. Keep only the chosen layout, theme, and font direction.
+1. Keep only the chosen layout direction.
 2. Remove all unused layout options.
 3. Remove `<script src="https://tryroids.com/roid-tool.js"></script>`.
-4. Remove `data-roid-tool`, `data-roid-option`, `data-roid-fonts`, `data-roid-font-target`, and `[data-roid-themes]` unless the user explicitly wants them preserved.
+4. Remove `data-roid-tool`, `data-roid-option`, and `data-roid-active` unless the user explicitly wants them preserved.
 5. Remove preview-only labels, wrappers, comments, and temporary styles.
 6. Convert the winning result into normal production code.
 
@@ -271,8 +202,6 @@ When the user picks a winner:
 Before finishing, verify:
 
 - only the winning layout remains
-- only the winning theme remains if the user asked to trim themes
-- only the winning font remains if the user asked to trim fonts
 - no preview-only wrapper or option markup remains
 - no `roid-tool.js` script tag remains
 - no dead styles remain from discarded directions

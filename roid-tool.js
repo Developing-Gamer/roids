@@ -1,1 +1,488 @@
-(()=>{const t=window;if(t.__roidToolLoaded)return;t.__roidToolLoaded=!0;const e="[data-roid-tool]",n="roid-tool",a="roid-tool-theme",i=`${e},[data-roid-option],[data-roid-themes],[data-roid-theme]`,o=["data-roid-tool","data-roid-option","data-roid-fonts","data-roid-font-target","data-roid-themes","data-roid-theme","data-roid-theme-label","data-roid-theme-accent","hidden"],r=(t,e)=>(t??"").trim()||e,s=t=>t instanceof Element&&(t.matches(i)||!!t.querySelector(i));function d(t){const e=(n=t,a="data-roid-themes",Array.from(n.children).find(t=>t.hasAttribute(a))??null);var n,a;return e?Array.from(e.children).filter(t=>t.hasAttribute("data-roid-theme")).map(t=>{const e=r(t.getAttribute("data-roid-theme"),""),n=r(t.getAttribute("data-roid-theme-accent"),"");return e&&n?{id:e,label:r(t.getAttribute("data-roid-theme-label"),e),accent:n,source:t}:null}).filter(Boolean):[]}function l(){const t=document.querySelector(e);if(!t)return null;const n=(a=t,i="data-roid-option",Array.from(a.children).filter(t=>t.hasAttribute(i))).map((t,e)=>({label:r(t.getAttribute("data-roid-option"),`Option ${e+1}`),element:t}));var a,i;const o=d(t),s=(t.getAttribute("data-roid-fonts")||"").split(",").map(t=>t.trim()).filter(Boolean),l=n.length>=2,h=o.length>0,c=s.length>0;return l||h||c?{label:r(t.getAttribute("data-roid-tool"),"Decision 1"),toolEl:t,options:n,themes:o,fonts:s,fontTarget:r(t.getAttribute("data-roid-font-target"),"")||null,showLayout:l,showTheme:h,hasFonts:c,activeIndex:Math.max(0,n.findIndex(t=>!t.element.hidden))}:null}function h(t){const{activeIndex:e,options:n}=t;return e>=0&&e<n.length&&!n[e].element.hidden?e:t.activeIndex=Math.max(0,n.findIndex(t=>!t.element.hidden))}function c(t,e,n){let a=!1,i=0;for(let o=0;o<t.options.length;o++){const{element:r}=t.options[o],s=t.options[o]!==e;s||(i=o),r.hidden!==s&&(n?.add(r),r.hidden=s,a=!0),s?("none"!==r.style.display&&(r.style.display="none"),r.removeAttribute("data-roid-active")):(r.style.display&&r.style.removeProperty("display"),r.setAttribute("data-roid-active",""))}return t.activeIndex=i,a}class p extends HTMLElement{group=null;onSelect=null;themeExpanded=!1;fontExpanded=!1;_hoverIn=null;_hoverOut=null;_themePinned=!1;_lastThemePinned=!1;_navMode="idle";_currentFont="";_fontTargetEl=null;constructor(){super(),this.root=this.attachShadow({mode:"open"}),this.root.innerHTML='<style>\n        :host{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);display:block;width:auto;max-width:calc(100vw - 16px);z-index:2147483647;color:#fff;font-family:"Outfit",ui-sans-serif,system-ui,sans-serif;line-height:1}\n        *,*::before,*::after{box-sizing:border-box}\n        [hidden]{display:none!important}\n        dialog{display:block;position:static;inset:auto;margin:0;padding:0;border:0;width:100%;max-width:none;background:transparent;color:inherit;overflow:visible;outline:none}\n        [data-panel]{display:flex;flex-direction:row;align-items:stretch;height:44px;min-width:0;border-radius:14px;padding:5px;background:rgba(12,12,14,.72);box-shadow:0 0 0 1px rgba(0,0,0,.85),inset 0 0 0 1px rgba(255,255,255,.09),0 24px 48px -14px rgba(0,0,0,.55);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);transition:min-width .36s cubic-bezier(0.4,0,0.2,1),width .36s cubic-bezier(0.4,0,0.2,1)}\n        [data-panel][data-theme-open]{min-width:min(calc(100vw - 16px),30rem)}\n        [data-seg]{display:flex;flex-direction:row;align-items:center;flex-shrink:0}\n        [data-seg][hidden]{display:none!important}\n        [data-seg="layout"]{flex:1;min-width:0}\n        [data-dw]{display:flex;align-items:center;padding:0 5px}\n        [data-dw][hidden]{display:none!important}\n        [data-d]{width:1px;height:18px;background:rgba(255,255,255,.12)}\n        [data-theme-cluster]{display:flex;align-items:center;flex-shrink:0;padding:0 5px;overflow:visible}\n        [data-theme-trigger]{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.55);padding:0;cursor:pointer;flex-shrink:0;box-shadow:0 0 0 1px rgba(0,0,0,.25),0 1px 6px rgba(0,0,0,.4);transition:transform .2s ease,border-color .2s ease}\n        [data-theme-trigger]:hover{transform:scale(1.08);border-color:rgba(255,255,255,.8);outline:none}\n        [data-theme-trigger]:focus-visible{outline:2px solid #fff;outline-offset:2px}\n        [data-swatches-clip]{overflow-x:hidden;overflow-y:visible;max-width:0;flex-shrink:0;transition:max-width .38s cubic-bezier(0.4,0,0.2,1) .05s}\n        [data-theme-cluster][data-expanded="true"] [data-swatches-clip]{max-width:300px;transition:max-width .38s cubic-bezier(0.4,0,0.2,1)}\n        [data-theme-cluster][data-pinned="true"] [data-swatches-clip]{max-width:300px;transition:none}\n        [data-swatches]{display:flex;align-items:center;gap:5px;opacity:0;padding:4px 6px 4px 8px;transition:opacity .24s ease .08s}\n        [data-theme-cluster][data-expanded="true"] [data-swatches]{opacity:1;transition:opacity .24s ease .04s}\n        [data-theme-cluster][data-pinned="true"] [data-swatches]{opacity:1;transition:none}\n        [data-swatch]{width:22px;height:22px;border-radius:50%;border:1.5px solid transparent;padding:0;cursor:pointer;flex-shrink:0;transition:transform .16s cubic-bezier(0.34,1.56,0.64,1),border-color .14s,box-shadow .14s}\n        [data-swatch]:hover{transform:scale(1.14)}\n        [data-swatch][aria-pressed="true"]{border-color:#fff;box-shadow:0 0 0 2.5px rgba(255,255,255,.3)}\n        [data-theme-cluster][data-pinned="false"] [data-swatch][data-active]{display:none}\n        [data-theme-cluster][data-pinned="true"] [data-theme-trigger]{display:none!important}\n        [data-swatch]:focus-visible{outline:2px solid #fff;outline-offset:2px}\n        [data-nav]{width:34px;height:34px;border:0;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;color:#9ca3af;background:transparent;cursor:pointer;transition:color 140ms ease,background-color 140ms ease,opacity 140ms ease}\n        [data-nav]:hover,[data-nav]:focus-visible{color:#fff;background:rgba(255,255,255,.1);outline:none}\n        [data-nav]:disabled{opacity:.45;cursor:default}\n        [data-center]{min-width:0;display:flex;align-items:center;padding:0 10px;gap:10px;flex:1}\n        [data-meta]{min-width:0;flex:1;display:flex;align-items:baseline;gap:10px}\n        [data-pos]{flex-shrink:0;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;font-weight:500;color:rgba(255,255,255,.45)}\n        [data-lbl]{min-width:0;flex:1;font-size:13px;font-weight:600;letter-spacing:-.01em;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#f4f4f5}\n        [data-lbl][data-empty]{color:rgba(255,255,255,.5)}\n        [data-panel][data-font-only] [data-center]{padding:0;gap:0;align-items:stretch;overflow:visible}\n        [data-panel][data-font-only] [data-font-wrap]{flex:1;display:flex;justify-content:center;align-items:center;padding:0;position:relative}\n        [data-panel][data-font-only] [data-font-trigger]{max-width:none}\n        [data-panel][data-font-only] [data-font-dd]{left:50%;right:auto;transform:translateX(-50%) scale(.92) translateY(6px);transform-origin:bottom center}\n        [data-panel][data-font-only] [data-font-dd][data-open]{transform:translateX(-50%) scale(1) translateY(0)}\n        [data-font-wrap]{display:flex;align-items:center;flex-shrink:0;padding:0 5px;position:relative}\n        [data-font-trigger]{-webkit-appearance:none;appearance:none;display:inline-block;vertical-align:middle;margin:0;padding:0;border:0;border-radius:10px;overflow:hidden;background:transparent;color:#9ca3af;cursor:pointer;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;font-weight:500;line-height:1;max-width:120px;transition:color 140ms ease}\n        [data-font-face]{display:grid;grid-template-columns:22px auto 22px;align-items:center;column-gap:6px;min-height:34px;padding:0 10px;border-radius:10px;box-sizing:border-box;transition:background-color 140ms ease,color 140ms ease}\n        [data-font-trigger]:hover [data-font-face],[data-font-trigger]:focus-visible [data-font-face],[data-font-trigger][aria-expanded="true"] [data-font-face]{color:#fff;background:rgba(255,255,255,.1);outline:none}\n        [data-font-slot]{display:flex;align-items:center;justify-content:center;min-width:0}\n        [data-font-slot] svg{display:block;width:14px;height:14px;flex-shrink:0}\n        [data-font-label]{min-width:0;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}\n        [data-font-chevron]{transition:transform .2s ease}\n        [data-font-trigger][aria-expanded="true"] [data-font-chevron]{transform:rotate(180deg)}\n        [data-font-dd]{position:absolute;right:0;bottom:calc(100% + 8px);min-width:180px;max-width:240px;background:rgba(18,18,20,.96);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:5px;box-shadow:0 0 0 1px rgba(0,0,0,.7),0 16px 48px rgba(0,0,0,.65);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);overflow:hidden;transform-origin:bottom right;transform:scale(.92) translateY(6px);opacity:0;pointer-events:none;transition:transform .2s cubic-bezier(0.34,1.3,0.64,1),opacity .18s ease}\n        [data-font-dd][data-open]{transform:scale(1) translateY(0);opacity:1;pointer-events:auto;transition:transform .22s cubic-bezier(0.34,1.3,0.64,1),opacity .16s ease}\n        [data-font-item]{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:8px 10px;border:0;background:transparent;border-radius:8px;cursor:pointer;text-align:left;color:#d1d5db;font-size:14px;transition:background .12s ease,color .12s ease}\n        [data-font-item]:hover,[data-font-item]:focus-visible{background:rgba(255,255,255,.08);color:#fff;outline:none}\n        [data-font-item][aria-selected="true"]{color:#fff}\n        [data-font-item] [data-check]{width:14px;height:14px;flex-shrink:0;opacity:0;color:rgba(255,255,255,.6)}\n        [data-font-item][aria-selected="true"] [data-check]{opacity:1}\n        @media(max-width:640px){:host{left:8px;bottom:8px;transform:none}}\n      </style>\n      <dialog aria-label="Roid Tool" tabindex="-1">\n        <section data-panel>\n          <div data-seg="theme">\n            <div data-theme-cluster data-expanded="false" data-pinned="false">\n              <button type="button" data-theme-trigger aria-label="Theme" aria-expanded="false" title="Theme"></button>\n              <div data-swatches-clip><div data-swatches role="group" aria-label="Theme choices"></div></div>\n            </div>\n            <div data-dw data-div="theme-trail"><div data-d></div></div>\n          </div>\n          <div data-seg="layout">\n            <button type="button" data-nav data-previous aria-label="Previous">\n              <svg viewBox="0 0 5 6" fill="currentColor" width="6" height="7" aria-hidden="true"><path d="M0.75 3L4.25 5.25L4.25 0.75L0.75 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>\n            </button>\n            <div data-dw><div data-d></div></div>\n            <div data-center><span data-meta><span data-pos></span><span data-lbl data-empty></span></span></div>\n            <div data-dw><div data-d></div></div>\n            <button type="button" data-nav data-next aria-label="Next">\n              <svg viewBox="0 0 5 6" fill="currentColor" width="6" height="7" aria-hidden="true"><path d="M4.25 3L0.75 5.25L0.75 0.75L4.25 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>\n            </button>\n          </div>\n          <div data-seg="font-dd">\n            <div data-dw data-div="font-lead"><div data-d></div></div>\n            <div data-font-wrap>\n              <button type="button" data-font-trigger aria-haspopup="listbox" aria-expanded="false" aria-label="Font">\n                <span data-font-face>\n                  <span data-font-slot><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg></span>\n                  <span data-font-label>Font</span>\n                  <span data-font-slot><svg data-font-chevron width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 15 12 9 18 15"/></svg></span>\n                </span>\n              </button>\n              <div data-font-dd role="listbox" aria-label="Choose font"></div>\n            </div>\n          </div>\n        </section>\n      </dialog>';const t=this.root;this.dialog=t.querySelector("dialog"),this.prev=t.querySelector("[data-previous]"),this.next=t.querySelector("[data-next]"),this.posText=t.querySelector("[data-pos]"),this.labelText=t.querySelector("[data-lbl]"),this.panel=t.querySelector("[data-panel]"),this.segTheme=t.querySelector('[data-seg="theme"]'),this.segLayout=t.querySelector('[data-seg="layout"]'),this.segFontDd=t.querySelector('[data-seg="font-dd"]'),this.divThemeTrail=t.querySelector('[data-div="theme-trail"]'),this.divFontLead=t.querySelector('[data-div="font-lead"]'),this.centerDiv=t.querySelector("[data-center]"),this.metaEl=t.querySelector("[data-meta]"),this.themeCluster=t.querySelector("[data-theme-cluster]"),this.themeTrigger=t.querySelector("[data-theme-trigger]"),this.themeSwatchWrap=t.querySelector("[data-swatches]"),this.fontTrigger=t.querySelector("[data-font-trigger]"),this.fontDropdown=t.querySelector("[data-font-dd]"),this.fontWrap=t.querySelector("[data-font-wrap]"),this.fontLabel=t.querySelector("[data-font-label]");const e=()=>{this._themePinned||(clearTimeout(this._hoverOut),this.themeExpanded||(this._hoverIn=setTimeout(()=>this._setTheme(!0),280)))};this.themeCluster.addEventListener("mouseenter",e),this.themeCluster.addEventListener("mouseleave",()=>{this._themePinned||(clearTimeout(this._hoverIn),this._hoverOut=setTimeout(()=>this._setTheme(!1),320))}),this.themeCluster.addEventListener("focusin",e),this.themeCluster.addEventListener("focusout",t=>{this._themePinned||this.themeCluster.contains(t.relatedTarget)||this.root.contains(t.relatedTarget)||(clearTimeout(this._hoverIn),this._hoverOut=setTimeout(()=>this._setTheme(!1),320))}),this._themeObs=new MutationObserver(()=>this._syncThemeUI()),this._themeObs.observe(document.documentElement,{attributes:!0,attributeFilter:["data-theme"]}),this.fontTrigger.addEventListener("click",t=>{t.stopPropagation(),this._setFontOpen(!this.fontExpanded)}),this._fontDocClick=t=>{this.fontExpanded&&(("function"==typeof t.composedPath?t.composedPath():[]).includes(this)||this._setFontOpen(!1))},this.onDocKey=t=>{if("Escape"===t.key)return this.fontExpanded?(t.preventDefault(),t.stopPropagation(),void this._setFontOpen(!1)):void(this.themeExpanded&&!this._themePinned&&(t.preventDefault(),t.stopPropagation(),this._setTheme(!1)))},this.dialog.addEventListener("keydown",this.onKeyDown),this.dialog.addEventListener("pointerdown",t=>{0===t.button&&t.target instanceof Element&&!t.target.closest("button")&&this.dialog.focus({preventScroll:!0})}),this.prev.addEventListener("click",()=>this._onNav(-1)),this.next.addEventListener("click",()=>this._onNav(1))}connectedCallback(){this.dialog.open||this.dialog.show(),this._focusDialog(),document.addEventListener("keydown",this.onDocKey,!0),document.addEventListener("click",this._fontDocClick,!0),this._syncThemeUI(),this._syncFontItems(),this._syncOptionAttrs()}disconnectedCallback(){this._clearHoverTimers(),document.removeEventListener("keydown",this.onDocKey,!0),document.removeEventListener("click",this._fontDocClick,!0),this._themeObs?.disconnect()}_toolEl(){return this.group?.toolEl??null}_clearHoverTimers(){clearTimeout(this._hoverIn),clearTimeout(this._hoverOut)}_dispatchChange(t,e){const n=this._toolEl();if(!n)return;const a={kind:t,tool:n,...e};for(const e of["roid-tool-change",`roid-tool-${t}-change`])n.dispatchEvent(new CustomEvent(e,{bubbles:!0,composed:!0,detail:a}))}_currentThemeId(){if(!this.group?.themes?.length)return"";const t=r(document.documentElement.getAttribute("data-theme"),"");return this.group.themes.some(e=>e.id===t)?t:""}_preferredThemeId(){const t=this._currentThemeId();if(t)return t;try{const t=r(localStorage.getItem(a),"");if(this.group?.themes?.some(e=>e.id===t))return t}catch(t){}return this.group?.themes?.[0]?.id||""}_themeById(t){return this.group?.themes?.find(e=>e.id===t)??null}_buildThemeItems(t){this.themeSwatchWrap&&(this.themeSwatchWrap.innerHTML="",t.forEach(t=>{const e=Object.assign(document.createElement("button"),{type:"button",title:t.label});e.setAttribute("data-swatch",""),e.dataset.themeId=t.id,e.setAttribute("aria-label",`${t.label} theme`),e.setAttribute("aria-pressed","false"),e.style.background=t.accent,e.addEventListener("click",e=>{e.stopPropagation(),this._setActiveTheme(t.id,{label:t.label,accent:t.accent}),this._themePinned||(this._clearHoverTimers(),this._setTheme(!1))}),this.themeSwatchWrap.append(e)}))}_syncThemeUI(){if(!this.group?.showTheme)return;const t=this._currentThemeId(),e=t?this._themeById(t):null;var n;this.themeTrigger&&(this.themeTrigger.style.background=(n=e?.accent||"",getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()||n||"#fff"),this.themeTrigger.title=e?`Theme: ${e.label}`:"Theme");const a=this._toolEl();a&&(t?a.setAttribute("data-roid-active-theme",t):a.removeAttribute("data-roid-active-theme")),this.themeSwatchWrap?.querySelectorAll("[data-swatch]").forEach(e=>{const n=e.dataset.themeId===t;e.setAttribute("aria-pressed",n?"true":"false"),e.toggleAttribute("data-active",n)})}_setActiveTheme(t,e={}){const n=this._themeById(t);if(n){if(document.documentElement.setAttribute("data-theme",n.id),this._syncThemeUI(),!1!==e.persist)try{localStorage.setItem(a,n.id)}catch(t){}e.skipEvent||this._dispatchChange("theme",{value:n.id,label:e.label||n.label,theme:n.id,accent:e.accent||n.accent,target:document.documentElement})}}_resolveFontTarget(){if(this.group?.fontTarget){const t=document.querySelector(this.group.fontTarget);if(t)return t}return this.group?.toolEl??null}_buildFontItems(t){this.fontDropdown&&(this.fontDropdown.innerHTML="",t.forEach(t=>{const e=document.createElement("button");e.type="button",e.setAttribute("data-font-item",""),e.setAttribute("role","option"),e.dataset.fontFamily=t,e.setAttribute("aria-selected",t===this._currentFont?"true":"false");const n=document.createElement("span");n.textContent=t,n.style.cssText=`font-family:"${t}",sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap`;const a=document.createElement("span");a.setAttribute("data-check",""),a.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>',e.append(n,a),e.addEventListener("click",e=>{e.stopPropagation(),this._setActiveFont(t),this._setFontOpen(!1)}),this.fontDropdown.append(e)}))}_syncFontItems(){this.fontDropdown?.querySelectorAll("[data-font-item]").forEach(t=>t.setAttribute("aria-selected",t.dataset.fontFamily===this._currentFont?"true":"false")),this.fontLabel&&(this.fontLabel.textContent=this._currentFont||"Font",this._currentFont?this.fontLabel.style.fontFamily=`"${this._currentFont}",sans-serif`:this.fontLabel.style.removeProperty("font-family"));const t=this._toolEl();t&&(this._currentFont?t.setAttribute("data-roid-active-font",this._currentFont):t.removeAttribute("data-roid-active-font"))}_setActiveFont(t,e={}){if(!this.group?.fonts?.includes(t))return;this._currentFont=t;const n=this._resolveFontTarget();this._fontTargetEl&&this._fontTargetEl!==n&&this._fontTargetEl.removeAttribute("data-roid-active-font"),this._fontTargetEl=n,n&&(n.style.fontFamily=`"${t}",sans-serif`,n.setAttribute("data-roid-active-font",t)),this._syncFontItems(),e.skipEvent||this._dispatchChange("font",{value:t,label:t,font:t,target:n})}_moveFont(t){const e=this.group?.fonts;if(!e?.length)return;const n=e.indexOf(this._currentFont);this._setActiveFont(e[((n<0?0:n)+t+e.length)%e.length])}_setFontOpen(t){this.fontExpanded=t,this.fontDropdown?.toggleAttribute("data-open",t),this.fontTrigger?.setAttribute("aria-expanded",t?"true":"false")}_syncOptionAttrs(){const t=this._toolEl();if(!t)return;if(!this.group?.showLayout)return t.removeAttribute("data-roid-active-option"),void t.removeAttribute("data-roid-active-option-index");const e=h(this.group),n=this.group.options[e];n&&(t.setAttribute("data-roid-active-option",n.label),t.setAttribute("data-roid-active-option-index",String(e)))}emitOptionChange(){if(!this.group?.showLayout)return;const t=h(this.group),e=this.group.options[t];e&&(this._syncOptionAttrs(),this._dispatchChange("option",{value:e.label,label:e.label,option:e.label,index:t,target:e.element,element:e.element}))}_setTheme(t){this.themeExpanded=t,this.themeCluster?.setAttribute("data-expanded",t?"true":"false"),this.panel?.toggleAttribute("data-theme-open",t),this.themeTrigger?.setAttribute("aria-expanded",t?"true":"false")}_focusDialog(){const t=this.root.activeElement;t instanceof HTMLElement&&t!==this.dialog&&t.blur(),this.dialog.focus({preventScroll:!0})}update(t,e){this.group=t,this.onSelect=e;const{showLayout:n,showTheme:a,hasFonts:i}=t,o=i&&!n&&!a,r=i&&!o,s=a&&!n&&!i;if(this._navMode=n?"layout":o?"font":"idle",this._themePinned=s,this.segTheme.hidden=!a,this.segLayout.hidden=!(n||o),this.segFontDd.hidden=!r,o?(this.fontWrap.parentElement!==this.centerDiv&&this.centerDiv.appendChild(this.fontWrap),this.metaEl.hidden=!0):(this.fontWrap.parentElement!==this.segFontDd&&this.segFontDd.appendChild(this.fontWrap),this.metaEl.hidden=!1),this.divThemeTrail.hidden=!(a&&(n||o||r)),this.divFontLead.hidden=!n,this.panel.style.minWidth=n||o?"":"0",this.panel.toggleAttribute("data-font-only",o),a){this._buildThemeItems(t.themes);const e=this._preferredThemeId();e&&this._setActiveTheme(e,{skipEvent:!0,persist:!1}),this._clearHoverTimers(),s?this._setTheme(!0):this._lastThemePinned&&this._setTheme(!1)}else this.themeSwatchWrap.innerHTML="",this._clearHoverTimers(),this._setTheme(!1),this._toolEl()?.removeAttribute("data-roid-active-theme");if(this._lastThemePinned=s,this.themeCluster?.setAttribute("data-pinned",s?"true":"false"),i){this._buildFontItems(t.fonts);const e=t.fonts.includes(this._currentFont)?this._currentFont:t.fonts[0];e&&this._setActiveFont(e,{skipEvent:!0})}else this._currentFont="",this.fontDropdown.innerHTML="",this._setFontOpen(!1),this._toolEl()?.removeAttribute("data-roid-active-font"),this._fontTargetEl&&(this._fontTargetEl.removeAttribute("data-roid-active-font"),this._fontTargetEl=null);this._syncThemeUI(),this._syncOptionAttrs(),this._render(),this.dialog.open||this.dialog.show(),this._focusDialog()}_render(){const t=this.group;if(t){if("layout"===this._navMode){const e=h(t),n=t.options.length>1;return this.posText.textContent=`${e+1}/${t.options.length}`,this.posText.title=t.label,this.prev.disabled=this.next.disabled=!n,this.labelText.textContent=t.options[e].label,this.labelText.style.removeProperty("font-family"),void this.labelText.removeAttribute("data-empty")}this.posText.textContent=this.labelText.textContent="",this.labelText.style.removeProperty("font-family"),this.labelText.setAttribute("data-empty",""),this.prev.disabled=this.next.disabled="font"!==this._navMode||(t.fonts?.length??0)<=1}}_moveLayout(t){const e=this.group;if(!e||e.options.length<=1)return;const n=e.options[(h(e)+t+e.options.length)%e.options.length];n&&(this.onSelect?.(n),this.dialog.focus({preventScroll:!0}))}_onNav(t){"layout"===this._navMode?this._moveLayout(t):"font"===this._navMode&&this._moveFont(t)}onKeyDown=t=>{!this.group||t.metaKey||t.ctrlKey||t.altKey||"ArrowLeft"!==t.key&&"ArrowRight"!==t.key||"idle"===this._navMode||(t.preventDefault(),this._onNav("ArrowRight"===t.key?1:-1))}}function u(){let t=null,a=!1;const i=new WeakSet,r=()=>{a||(a=!0,requestAnimationFrame(()=>{a=!1,d()}))};function d(){const e=l();if(!e)return t?.remove(),void(t=null);e.options.length>0&&c(e,e.options[h(e)]??e.options[0],i),t||(t=document.createElement(n),(document.body??document.documentElement).append(t));const a=n=>{c(e,n,i),t?.update(e,a),t?.emitOptionChange()};t.update(e,a)}new MutationObserver(t=>{for(const n of t)if("attributes"!==n.type){for(const t of n.addedNodes)if(s(t))return void r();for(const t of n.removedNodes)if(s(t))return void r()}else{if("hidden"===n.attributeName&&i.delete(n.target))continue;if(s(n.target)||n.target instanceof Element&&n.target.matches(e))return void r()}}).observe(document.documentElement,{subtree:!0,childList:!0,attributes:!0,attributeFilter:o}),d()}customElements.get(n)||customElements.define(n,p),function(){const t=document.documentElement;if(t.hasAttribute("data-roid-tool-ui-fonts"))return;t.setAttribute("data-roid-tool-ui-fonts","");const e=Object.assign(document.createElement("link"),{rel:"preconnect",href:"https://fonts.googleapis.com"}),n=Object.assign(document.createElement("link"),{rel:"preconnect",href:"https://fonts.gstatic.com",crossOrigin:""}),a=Object.assign(document.createElement("link"),{rel:"stylesheet",href:"https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Outfit:wght@500;600&display=swap"});document.head.append(e,n,a)}(),"loading"===document.readyState?document.addEventListener("DOMContentLoaded",u,{once:!0}):u()})();
+(() => {
+  const w = window;
+  if (w.__roidToolLoaded) return;
+  w.__roidToolLoaded = true;
+
+  const WRAPPER_SEL = "[data-roid-tool]";
+  const TAG = "roid-tool";
+  const MIN_OPTIONS = 2;
+  const MAX_OPTIONS = 5;
+
+  const ATTR_WATCH = [
+    "data-roid-tool",
+    "data-roid-option",
+    "hidden",
+  ];
+
+  const trim = (v, fb) => (v ?? "").trim() || fb;
+
+  /** True if node is or contains roid markup we care about */
+  function touchesRoid(node) {
+    return (
+      node instanceof Element &&
+      (node.matches(`${WRAPPER_SEL},[data-roid-option]`) ||
+        !!node.querySelector(`${WRAPPER_SEL},[data-roid-option]`))
+    );
+  }
+
+  function parseTool() {
+    const toolEl = document.querySelector(WRAPPER_SEL);
+    if (!toolEl) return null;
+
+    const raw = Array.from(toolEl.children).filter((el) =>
+      el.hasAttribute("data-roid-option")
+    );
+    if (raw.length < MIN_OPTIONS) return null;
+
+    const overflow = raw.length > MAX_OPTIONS;
+    const slice = raw.slice(0, MAX_OPTIONS);
+    const options = slice.map((el, i) => ({
+      label: trim(el.getAttribute("data-roid-option"), `Option ${i + 1}`),
+      element: el,
+    }));
+
+    return {
+      label: trim(toolEl.getAttribute("data-roid-tool"), "Decision"),
+      toolEl,
+      options,
+      overflow,
+      activeIndex: Math.max(
+        0,
+        options.findIndex((o) => !o.element.hidden)
+      ),
+    };
+  }
+
+  function resolveActiveIndex(state) {
+    const { activeIndex, options } = state;
+    if (
+      activeIndex >= 0 &&
+      activeIndex < options.length &&
+      !options[activeIndex].element.hidden
+    ) {
+      return activeIndex;
+    }
+    return (state.activeIndex = Math.max(
+      0,
+      options.findIndex((o) => !o.element.hidden)
+    ));
+  }
+
+  /** Hide direct children with data-roid-option that are not in the active list (e.g. beyond max 5). */
+  function hideExcludedOptions(toolEl, options) {
+    const keep = new Set(options.map((o) => o.element));
+    for (const child of toolEl.children) {
+      if (!child.hasAttribute("data-roid-option")) continue;
+      if (keep.has(child)) continue;
+      child.hidden = true;
+      child.removeAttribute("data-roid-active");
+      if (child.style.display !== "none") child.style.display = "none";
+    }
+  }
+
+  /**
+   * Show exactly one option: `active` must be the same object as one of `state.options[i]` (not a raw element).
+   * @param {WeakSet|null} tracked - optional set to track nodes we set `hidden` on for observer
+   */
+  function applyVisibility(state, active, tracked) {
+    let changed = false;
+    let idx = 0;
+    for (let i = 0; i < state.options.length; i++) {
+      const { element } = state.options[i];
+      const hide = state.options[i] !== active;
+      if (!hide) idx = i;
+      if (element.hidden !== hide) {
+        tracked?.add(element);
+        element.hidden = hide;
+        changed = true;
+      }
+      if (hide) {
+        if (element.style.display !== "none") element.style.display = "none";
+        element.removeAttribute("data-roid-active");
+      } else {
+        if (element.style.display) element.style.removeProperty("display");
+        element.setAttribute("data-roid-active", "");
+      }
+    }
+    state.activeIndex = idx;
+    return changed;
+  }
+
+  class RoidTool extends HTMLElement {
+    group = null;
+    onSelect = null;
+
+    constructor() {
+      super();
+      this.root = this.attachShadow({ mode: "open" });
+      this.root.innerHTML = `
+<style>
+  :host {
+    position: fixed;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    display: block;
+    width: auto;
+    max-width: calc(100vw - 16px);
+    z-index: 2147483647;
+    color: #fff;
+    font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  dialog {
+    display: block;
+    position: static;
+    inset: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    width: 100%;
+    max-width: none;
+    background: transparent;
+    color: inherit;
+    overflow: visible;
+    outline: none;
+  }
+  [data-panel] {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    height: 44px;
+    min-width: 0;
+    border-radius: 14px;
+    padding: 5px;
+    background: rgba(12, 12, 14, 0.72);
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.85),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.09),
+      0 24px 48px -14px rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  [data-nav] {
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    background: transparent;
+    cursor: pointer;
+    transition: color 140ms ease, background-color 140ms ease, opacity 140ms ease;
+    flex-shrink: 0;
+  }
+  [data-nav]:hover,
+  [data-nav]:focus-visible {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+  }
+  [data-nav]:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+  [data-center] {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    gap: 10px;
+    flex: 1;
+  }
+  [data-meta] {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    justify-content: center;
+  }
+  [data-pos] {
+    flex-shrink: 0;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.45);
+  }
+  [data-lbl] {
+    min-width: 0;
+    flex: 1;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #f4f4f5;
+  }
+  @media (max-width: 640px) {
+    :host {
+      left: 8px;
+      bottom: 8px;
+      transform: none;
+    }
+  }
+</style>
+<dialog aria-label="Roid Tool" tabindex="-1">
+  <section data-panel>
+    <button type="button" data-nav data-previous aria-label="Previous variant">
+      <svg viewBox="0 0 5 6" fill="currentColor" width="6" height="7" aria-hidden="true">
+        <path d="M0.75 3L4.25 5.25L4.25 0.75L0.75 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div data-center>
+      <span data-meta>
+        <span data-pos></span>
+        <span data-lbl></span>
+      </span>
+    </div>
+    <button type="button" data-nav data-next aria-label="Next variant">
+      <svg viewBox="0 0 5 6" fill="currentColor" width="6" height="7" aria-hidden="true">
+        <path d="M4.25 3L0.75 5.25L0.75 0.75L4.25 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </section>
+</dialog>`;
+
+      const r = this.root;
+      this.dialog = r.querySelector("dialog");
+      this.prev = r.querySelector("[data-previous]");
+      this.next = r.querySelector("[data-next]");
+      this.posText = r.querySelector("[data-pos]");
+      this.labelText = r.querySelector("[data-lbl]");
+
+      this.dialog.addEventListener("keydown", this.onKeyDown);
+      this.dialog.addEventListener("pointerdown", (ev) => {
+        if (
+          ev.button === 0 &&
+          ev.target instanceof Element &&
+          !ev.target.closest("button")
+        ) {
+          this.dialog.focus({ preventScroll: true });
+        }
+      });
+      this.prev.addEventListener("click", () => this._move(-1));
+      this.next.addEventListener("click", () => this._move(1));
+    }
+
+    connectedCallback() {
+      if (!this.dialog.open) this.dialog.show();
+      this._focusDialog();
+    }
+
+    disconnectedCallback() {}
+
+    _toolEl() {
+      return this.group?.toolEl ?? null;
+    }
+
+    _dispatchChange(detail) {
+      const tool = this._toolEl();
+      if (!tool) return;
+      const payload = { kind: "option", tool, ...detail };
+      tool.dispatchEvent(
+        new CustomEvent("roid-tool-change", {
+          bubbles: true,
+          composed: true,
+          detail: payload,
+        })
+      );
+      tool.dispatchEvent(
+        new CustomEvent("roid-tool-option-change", {
+          bubbles: true,
+          composed: true,
+          detail: payload,
+        })
+      );
+    }
+
+    emitOptionChange() {
+      if (!this.group) return;
+      const i = resolveActiveIndex(this.group);
+      const opt = this.group.options[i];
+      if (!opt) return;
+      this._syncWrapperAttrs();
+      this._dispatchChange({
+        value: opt.label,
+        label: opt.label,
+        index: i,
+        target: opt.element,
+        element: opt.element,
+      });
+    }
+
+    _syncWrapperAttrs() {
+      const tool = this._toolEl();
+      if (!tool || !this.group) return;
+      const i = resolveActiveIndex(this.group);
+      const opt = this.group.options[i];
+      if (opt) {
+        tool.setAttribute("data-roid-active-option", opt.label);
+        tool.setAttribute("data-roid-active-option-index", String(i));
+      }
+    }
+
+    _focusDialog() {
+      const ae = this.root.activeElement;
+      if (ae instanceof HTMLElement && ae !== this.dialog) ae.blur();
+      this.dialog.focus({ preventScroll: true });
+    }
+
+    update(group, onSelect) {
+      this.group = group;
+      this.onSelect = onSelect;
+      this._syncWrapperAttrs();
+      this._render();
+      if (!this.dialog.open) this.dialog.show();
+      this._focusDialog();
+    }
+
+    _render() {
+      const g = this.group;
+      if (!g) return;
+      const i = resolveActiveIndex(g);
+      const n = g.options.length;
+      this.posText.textContent = `${i + 1}/${n}`;
+      this.posText.title = g.label;
+      this.labelText.textContent = g.options[i].label;
+      const multi = n > 1;
+      this.prev.disabled = this.next.disabled = !multi;
+    }
+
+    _move(delta) {
+      const g = this.group;
+      if (!g || g.options.length <= 1) return;
+      const len = g.options.length;
+      const nextIdx = (resolveActiveIndex(g) + delta + len) % len;
+      const opt = g.options[nextIdx];
+      if (opt) {
+        this.onSelect?.(opt);
+        this._focusDialog();
+      }
+    }
+
+    onKeyDown = (ev) => {
+      if (!this.group || ev.metaKey || ev.ctrlKey || ev.altKey) return;
+      if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+      ev.preventDefault();
+      this._move(ev.key === "ArrowRight" ? 1 : -1);
+    };
+  }
+
+  let host = null;
+  let raf = false;
+  const hiddenTracked = new WeakSet();
+
+  function schedule() {
+    if (raf) return;
+    raf = true;
+    requestAnimationFrame(() => {
+      raf = false;
+      sync();
+    });
+  }
+
+  function sync() {
+    const state = parseTool();
+    if (!state) {
+      host?.remove();
+      host = null;
+      return;
+    }
+
+    hideExcludedOptions(state.toolEl, state.options);
+    applyVisibility(
+      state,
+      state.options[resolveActiveIndex(state)] ?? state.options[0],
+      hiddenTracked
+    );
+
+    if (!host) {
+      host = document.createElement(TAG);
+      (document.body ?? document.documentElement).appendChild(host);
+    }
+
+    const onPick = (opt) => {
+      applyVisibility(state, opt, hiddenTracked);
+      host?.update(state, onPick);
+      host?.emitOptionChange();
+    };
+
+    host.update(state, onPick);
+  }
+
+  function boot() {
+    new MutationObserver((records) => {
+      for (const rec of records) {
+        if (rec.type !== "attributes") {
+          for (const node of rec.addedNodes) {
+            if (touchesRoid(node)) return schedule();
+          }
+          for (const node of rec.removedNodes) {
+            if (touchesRoid(node)) return schedule();
+          }
+        } else {
+          if (
+            rec.attributeName === "hidden" &&
+            hiddenTracked.delete(rec.target)
+          ) {
+            continue;
+          }
+          if (
+            rec.target instanceof Element &&
+            (touchesRoid(rec.target) ||
+              rec.target.matches(WRAPPER_SEL) ||
+              rec.target.hasAttribute("data-roid-option"))
+          ) {
+            return schedule();
+          }
+        }
+      }
+    }).observe(document.documentElement, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ATTR_WATCH,
+    });
+
+    sync();
+  }
+
+  if (!customElements.get(TAG)) {
+    customElements.define(TAG, RoidTool);
+  }
+
+  (function injectFonts() {
+    const root = document.documentElement;
+    if (root.hasAttribute("data-roid-tool-ui-fonts")) return;
+    root.setAttribute("data-roid-tool-ui-fonts", "");
+    const preG = Object.assign(document.createElement("link"), {
+      rel: "preconnect",
+      href: "https://fonts.googleapis.com",
+    });
+    const preS = Object.assign(document.createElement("link"), {
+      rel: "preconnect",
+      href: "https://fonts.gstatic.com",
+      crossOrigin: "",
+    });
+    const sheet = Object.assign(document.createElement("link"), {
+      rel: "stylesheet",
+      href:
+        "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Outfit:wght@500;600&display=swap",
+    });
+    document.head.append(preG, preS, sheet);
+  })();
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
+  }
+})();

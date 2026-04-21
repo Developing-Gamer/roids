@@ -1,6 +1,6 @@
 ---
 name: ui
-description: Use when the user wants multiple UI, theme, or font directions.
+description: Use when the user wants multiple UI directions to compare in the Roid Tool.
 ---
 
 # UI
@@ -11,14 +11,12 @@ This file is only a bootstrap. The full rules live in the hosted skill.
 
 Use this skill when the user wants:
 
-- multiple UI directions to compare
-- multiple theme directions to compare
-- multiple font directions to compare
+- multiple UI directions to compare (2–5 variants)
 - a preview-first workflow before cleanup
 
 ## Mandatory: `roid-tool.js`
 
-When you show **more than one** comparable direction, you **must** load **`https://tryroids.com/roid-tool.js`** once per page and use the **`data-roid-*` contract** from the hosted `SKILL.txt` (wrapper + options / themes / fonts as documented there).
+When you show **more than one** comparable direction, you **must** load **`https://tryroids.com/roid-tool.js`** once per page and use the **`data-roid-*` contract** from the hosted `SKILL.txt` (a single `data-roid-tool` wrapper with 2–5 direct children carrying `data-roid-option` labels).
 
 **Do not** replace this with custom comparison UI (tabs, accordions, your own bottom bar, `<select>`, radio groups, etc.). Agents sometimes do that to “save time”; it breaks the shared preview surface and hides the machine-readable state the tool sets on the wrapper.
 
