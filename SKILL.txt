@@ -16,7 +16,7 @@ Use this skill when the user wants to compare multiple UI directions before lock
 
 Use this skill when the user asks for:
 
-- 2 to 5 UI options for a section or component
+- multiple UI options for a section or component (**recommended:** about **2–5** materially different directions unless they specify another count)
 - a preview-first workflow where the user chooses a winner before cleanup
 
 Do not use this skill for:
@@ -30,7 +30,7 @@ Do not use this skill for:
 When this skill is invoked:
 
 1. Find the exact target location.
-2. Generate only the options the user needs (between 2 and 5 inclusive).
+2. Generate the number of options the user asked for; if they did not specify, default to a **recommended** small set (often **2–5**) of materially different directions.
 3. Wire the preview with the Roids contract below.
 4. Always load `https://tryroids.com/roid-tool.js` when showing multiple variants so the user can compare them in the browser.
 5. Never present variant comparisons without the Roids script unless a higher-priority instruction explicitly forbids it.
@@ -59,9 +59,9 @@ Before generating options:
 
 ## Variant Rules
 
-Generate **2 to 5** materially different options only. Each option is one **direct child** of the wrapper with **`data-roid-option`**. The value of that attribute is the **label** shown between the prev/next arrows in Roids (this is how the agent names each variation).
+Each option is one **direct child** of the wrapper with **`data-roid-option`**. The value of that attribute is the **label** shown between the prev/next arrows in Roids (this is how the agent names each variation).
 
-If you supply **more than five** `data-roid-option` siblings, the runtime only uses the **first five**; avoid relying on that—trim in your markup instead.
+**Recommended:** about **2–5** materially different options so comparison stays scannable—**unless the user states a specific count** (e.g. “give me 8”), in which case honor that. You still need **at least two** options for the Roids bar to appear.
 
 Good differences:
 
@@ -117,12 +117,12 @@ Use exactly one preview wrapper per page:
 | Input | Required | Meaning |
 |---|---|---|
 | `data-roid-tool` | Yes | Short label for the decision surface (shown as a hint on the position counter) |
-| `data-roid-option` | Yes, 2–5 siblings | One **direct child** per variant; attribute value = label in Roids |
+| `data-roid-option` | Yes, 2+ siblings | One **direct child** per variant; attribute value = label in Roids |
 
 ### Rules
 
 - `data-roid-option` items must be **direct children** of the `data-roid-tool` wrapper.
-- Provide **between 2 and 5** `data-roid-option` children. With fewer than two, the bar does not appear; with more than five, only the first five participate.
+- Provide **at least two** `data-roid-option` children (fewer than two hides the bar). There is **no fixed upper limit** in the contract—prefer a **recommended** small set (~2–5) unless the user asks for more.
 - Inject `https://tryroids.com/roid-tool.js` exactly once. **Loading this script is not optional** when showing multiple variants.
 - If variants are being shown, **do not** skip the script and **do not** substitute a custom comparison UI unless a higher-priority instruction explicitly requires that.
 - Do not hardcode option labels inside JS. The agent must supply them in markup (`data-roid-option="…"`).
@@ -132,7 +132,7 @@ Use exactly one preview wrapper per page:
 
 ## What Roids shows
 
-When the wrapper has **two to five** `data-roid-option` direct children, the bar shows **Previous**, the **active option’s label** (from `data-roid-option`), and **Next**, plus a small **index counter** (e.g. `2/4`). There are no theme or font controls.
+When the wrapper has **two or more** `data-roid-option` direct children, the bar shows **Previous**, the **active option’s label** (from `data-roid-option`), and **Next**, plus a small **index counter** (e.g. `2/7`). There are no theme or font controls in this layout-only mode.
 
 ## Selection state contract
 

@@ -1,6 +1,6 @@
 ---
 name: roids
-description: Use when presenting more than one comparable UI direction (2–5 variants), or proactively whenever you ship multiple layout options for the user to choose—do not wait for the user to mention Roids or type /roids. Use for comparison, preview-first, or pick-a-winner flows before cleanup.
+description: Use when presenting more than one comparable UI direction, or proactively whenever you ship multiple layout options for the user to choose—do not wait for the user to mention Roids or type /roids. Use for comparison, preview-first, or pick-a-winner flows before cleanup. Default to a small set of variants (~2–5) unless the user specifies how many.
 metadata:
   version: "1.0.0"
 ---
