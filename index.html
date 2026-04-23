@@ -27,7 +27,6 @@
     }
     a { color: inherit; }
     button { font: inherit; cursor: pointer; }
-
     .c-grid {
       position: absolute; inset: 0;
       background-image:
@@ -151,6 +150,120 @@
     .c-copy:hover  { background: #c6ff00; }
     .c-copy.copied { background: #0a0a0a; color: #f3f3ee; border-left: 1.5px solid #f3f3ee; }
 
+    .c-launch {
+      width: 100%;
+      max-width: min(720px, 100%);
+      margin: clamp(28px, 4vw, 48px) auto 0;
+    }
+    .c-launch .c-launch-spot { position: relative; }
+    .c-launch .c-launch-ribbon {
+      position: absolute; top: -10px; left: 16px; z-index: 2;
+      background: #c6ff00; color: #0a0a0a;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
+      padding: 6px 12px; border: 1.5px solid #0a0a0a;
+      box-shadow: 3px 3px 0 #0a0a0a;
+    }
+    .c-launch .c-launch-preview {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      border-radius: 14px;
+      border: 1.5px solid #0a0a0a;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.12);
+      overflow: hidden;
+      background: #0a0a0a;
+    }
+    .c-launch .c-launch-poster {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 50%;
+      display: block;
+    }
+    .c-launch .c-launch-preview::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.35) 100%);
+      pointer-events: none;
+    }
+    .c-launch .c-launch-play {
+      position: absolute; inset: 0;
+      z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      color: #f3f3ee; background: transparent; border: none;
+      padding: 16px;
+      cursor: pointer;
+      transition: color .15s, transform .12s;
+    }
+    .c-launch .c-launch-play:hover { color: #c6ff00; }
+    .c-launch .c-launch-play:active { transform: scale(0.98); }
+    .c-launch .c-launch-play-in {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 12px 20px;
+      background: #0a0a0a;
+      border: 1.5px solid #0a0a0a;
+      border-radius: 999px;
+      /* even cream ring (was single-offset 4px 4px, read as “white on one end”) */
+      box-shadow: 0 0 0 2px #f3f3ee;
+      color: #f3f3ee;
+    }
+    .c-launch .c-launch-play:hover .c-launch-play-in {
+      background: #c6ff00; color: #0a0a0a; border-color: #0a0a0a;
+      box-shadow: 0 0 0 2px #0a0a0a, 0 0 0 4px #f3f3ee;
+    }
+    .c-launch .c-launch-play-ico {
+      width: 20px; height: 20px; flex-shrink: 0; fill: currentColor;
+    }
+
+    /* Do not set display on dialog without :open — author display:flex overrides
+       UA "display: none" and leaves the (closed) dialog + video in the page flow. */
+    .c-launch-dlg {
+      max-width: none; margin: 0; border: none; box-sizing: border-box;
+      background: transparent; width: 100%;
+    }
+    .c-launch-dlg:not([open]) {
+      display: none !important;
+    }
+    .c-launch-dlg[open] {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 100dvh;
+      max-height: 100dvh;
+      padding: clamp(12px, 2.5vw, 28px);
+      overflow: auto;
+    }
+    .c-launch-dlg::backdrop { background: rgba(10, 10, 10, 0.82); }
+    .c-launch-dlg .c-launch-dlg-surface {
+      position: relative;
+      width: 100%;
+      max-width: min(900px, 100%);
+    }
+    .c-launch-dlg .c-launch-dlg-x-form {
+      position: absolute; top: 8px; right: 8px; z-index: 20;
+      margin: 0; padding: 0; border: 0; background: transparent;
+    }
+    .c-launch-dlg .c-launch-dlg-x {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1.5px solid #0a0a0a; background: #f3f3ee; color: #0a0a0a;
+      font: inherit; font-size: 22px; line-height: 1; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 3px 3px 0 #0a0a0a;
+      transition: background .15s, color .15s;
+    }
+    .c-launch-dlg .c-launch-dlg-x:hover { background: #c6ff00; }
+    .c-launch-dlg video {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+      border: 1.5px solid #0a0a0a;
+      background: #000;
+    }
+
     @media (max-width: 720px) {
       body {
         display: flex;
@@ -189,6 +302,8 @@
       }
       .c-top .c-tag { padding: 5px 10px; font-size: 11px; }
       .c-top .c-tag svg { width: 11px; height: 11px; }
+
+      .c-launch { margin-top: clamp(20px, 3vw, 32px); }
 
       .c-cmd-row {
         margin-top: clamp(20px, 4vw, 32px);
@@ -251,6 +366,7 @@
         </span>
       </h1>
     </div>
+
     <div class="c-cmd-row">
       <div class="c-cmd">
         <span class="c-cmd-text">
@@ -262,24 +378,97 @@
         </button>
       </div>
     </div>
+
+    <div class="c-launch">
+      <div class="c-launch-spot">
+        <span class="c-launch-ribbon">New</span>
+        <div class="c-launch-preview">
+          <img
+            class="c-launch-poster"
+            src="launch-poster.jpg"
+            width="1920"
+            height="1080"
+            alt=""
+            decoding="async"
+            fetchpriority="low"
+          />
+          <button
+            type="button"
+            class="c-launch-play js-launch-open"
+            aria-haspopup="dialog"
+            aria-controls="c-launch-dlg"
+          >
+            <span class="c-launch-play-in">
+              <svg class="c-launch-play-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7-11-7z" /></svg>
+              <span>Watch demo</span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <dialog class="c-launch-dlg" id="c-launch-dlg" aria-label="Roids launch video">
+    <div class="c-launch-dlg-surface">
+      <form class="c-launch-dlg-x-form" method="dialog">
+        <button type="submit" class="c-launch-dlg-x" aria-label="Close video">&times;</button>
+      </form>
+      <video
+        id="c-launch-video"
+        src="launch.mp4"
+        controls
+        playsinline
+        preload="metadata"
+      ></video>
+    </div>
+  </dialog>
 
   <script>
     const CMD = 'npx skills add https://github.com/developing-gamer/roids';
+    const launchDlg = document.getElementById('c-launch-dlg');
+    const launchVideo = document.getElementById('c-launch-video');
 
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('.js-copy');
-      if (!btn) return;
-      navigator.clipboard.writeText(CMD).then(() => {
-        const labelEl = btn.querySelector('.label');
-        const original = labelEl ? labelEl.textContent : null;
-        btn.classList.add('copied');
-        if (labelEl) labelEl.textContent = 'Copied';
-        setTimeout(() => {
-          btn.classList.remove('copied');
-          if (labelEl && original) labelEl.textContent = original;
-        }, 1800);
-      }).catch(() => {});
+      if (btn) {
+        navigator.clipboard.writeText(CMD).then(() => {
+          const labelEl = btn.querySelector('.label');
+          const original = labelEl ? labelEl.textContent : null;
+          btn.classList.add('copied');
+          if (labelEl) labelEl.textContent = 'Copied';
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            if (labelEl && original) labelEl.textContent = original;
+          }, 1800);
+        }).catch(() => {});
+        return;
+      }
+
+      if (e.target.closest('.js-launch-open')) {
+        e.preventDefault();
+        launchDlg.showModal();
+        if (launchVideo) {
+          launchVideo.muted = false;
+          launchVideo.play().catch(() => {
+            launchVideo.muted = true;
+            return launchVideo.play();
+          });
+        }
+        return;
+      }
+
+      /* Click dimmed area (not on video / surface) to close */
+      if (launchDlg.hasAttribute('open') && e.target === launchDlg) {
+        e.preventDefault();
+        launchDlg.close();
+      }
+    });
+
+    launchDlg.addEventListener('close', () => {
+      if (launchVideo) {
+        launchVideo.pause();
+        launchVideo.currentTime = 0;
+      }
     });
   </script>
 
