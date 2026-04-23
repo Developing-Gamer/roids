@@ -5,7 +5,7 @@ Compare UI directions side by side in the browser.
 Roids is an open-source skill + runtime for AI coding agents (Cursor, Claude Code, Codex, and similar tools). When an agent generates more than one version of a layout, component, or page, Roids wires those variants into a single page with a small bar at the bottom that lets you flip between them. You pick a winner, the agent keeps that one and removes the rest.
 
 - **Runtime:** `roid-tool.js` (~16 KB, no dependencies, single file)
-- **Contract:** `data-roid-*` attributes on plain HTML
+- **Contract:** `data-roid-`* attributes on plain HTML
 - **Skill:** `skills/roids/SKILL.md` + `SKILL.txt` tell the agent how to produce variants correctly
 - **Site:** [tryroids.com](https://tryroids.com)
 
@@ -22,7 +22,7 @@ Agents tend to commit to one version too early or, worse, invent their own compa
 Roids is distributed as a skill. The `skills` CLI pulls it from this repository and installs it into your local skills directory so any compatible agent can use it.
 
 ```bash
-npx skills add https://github.com/developing-gamer/roids --skill roids
+npx skills add https://github.com/developing-gamer/roids
 ```
 
 That’s it. No config, no API key, no build step.
@@ -78,13 +78,15 @@ Open the page. The Roids bar appears at the bottom with the active label in the 
 
 ### Contract reference
 
-| Attribute | Where | Purpose |
-|---|---|---|
-| `data-roid-tool="…"` | Wrapper | Label for the decision (appears as a hint near the counter) |
-| `data-roid-option="…"` | Direct child of the wrapper, 2+ siblings | One per variant; value becomes the label in the Roids bar |
-| `data-roid-active` | Written by runtime | Marks the currently visible option |
-| `data-roid-active-option` | Written by runtime on the wrapper | The active label |
-| `data-roid-active-option-index` | Written by runtime on the wrapper | Zero-based index |
+
+| Attribute                       | Where                                    | Purpose                                                     |
+| ------------------------------- | ---------------------------------------- | ----------------------------------------------------------- |
+| `data-roid-tool="…"`            | Wrapper                                  | Label for the decision (appears as a hint near the counter) |
+| `data-roid-option="…"`          | Direct child of the wrapper, 2+ siblings | One per variant; value becomes the label in the Roids bar   |
+| `data-roid-active`              | Written by runtime                       | Marks the currently visible option                          |
+| `data-roid-active-option`       | Written by runtime on the wrapper        | The active label                                            |
+| `data-roid-active-option-index` | Written by runtime on the wrapper        | Zero-based index                                            |
+
 
 Roids dispatches a `roid-tool-change` event on both the wrapper and `document` each time the user switches variants. Use it if you want to sync other UI to the current selection.
 
@@ -171,17 +173,17 @@ Contributions are welcome — bug fixes, accessibility improvements, better keyb
 
 1. **Open an issue first for anything non-trivial.** It’s faster than rewriting a PR.
 2. **Keep the runtime small.** `roid-tool.js` is intentionally a single file with zero dependencies. New features should justify their byte cost.
-3. **Don’t break the contract.** The `data-roid-*` attributes, the event name (`roid-tool-change`), and the wrapper / option structure are part of the public API. Changing them breaks every page that uses Roids. If you need to change behavior, add to the contract rather than modifying existing surface area.
+3. **Don’t break the contract.** The `data-roid-`* attributes, the event name (`roid-tool-change`), and the wrapper / option structure are part of the public API. Changing them breaks every page that uses Roids. If you need to change behavior, add to the contract rather than modifying existing surface area.
 4. **Match the skill.** If you change runtime behavior, update `SKILL.txt` (and `skills/roids/SKILL.md` if needed) in the same PR. The skill and the runtime ship together.
 5. **Test with 2 and with many variants.** The bar should render identically whether the page has 2 or 8 `data-roid-option` children.
 
 ### Pull request checklist
 
-- [ ] `demo.html` still works (open locally, flip between variants, no console errors)
-- [ ] `SKILL.txt` reflects any behavior change
-- [ ] No new runtime dependencies
-- [ ] No new global variables beyond `window.__roidToolLoaded`
-- [ ] Commit messages describe *why*, not just *what*
+- `demo.html` still works (open locally, flip between variants, no console errors)
+- `SKILL.txt` reflects any behavior change
+- No new runtime dependencies
+- No new global variables beyond `window.__roidToolLoaded`
+- Commit messages describe *why*, not just *what*
 
 ### Reporting bugs
 
