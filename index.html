@@ -171,20 +171,7 @@
       border: 1.5px solid #0a0a0a;
       box-shadow: 0 24px 70px rgba(0,0,0,0.12);
       overflow: hidden;
-      background: #0a0a0a;
-    }
-    .c-launch .c-launch-poster {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: 50% 50%;
-      display: block;
-    }
-    .c-launch .c-launch-preview::after {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(180deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.35) 100%);
-      pointer-events: none;
+      background: #000;
     }
     .c-launch .c-launch-play {
       position: absolute; inset: 0;
@@ -383,15 +370,6 @@
       <div class="c-launch-spot">
         <span class="c-launch-ribbon">New</span>
         <div class="c-launch-preview">
-          <img
-            class="c-launch-poster"
-            src="launch-poster.jpg"
-            width="1920"
-            height="1080"
-            alt=""
-            decoding="async"
-            fetchpriority="low"
-          />
           <button
             type="button"
             class="c-launch-play js-launch-open"
