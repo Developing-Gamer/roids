@@ -13,7 +13,7 @@ Roids is an open-source skill + runtime for AI coding agents (Cursor, Claude Cod
 
 Remotion render used for the on-site / static landing in this repo (`index.html`).
 
-<video src="https://github.com/Developing-Gamer/roids/releases/download/launch-v1/launch.mp4" controls width="100%"></video>
+https://github.com/user-attachments/assets/ab8ea0d5-84d0-4de4-ae68-deb8f829f523
 
 ---
 
